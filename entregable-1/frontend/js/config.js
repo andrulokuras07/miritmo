@@ -1,5 +1,5 @@
 // URL de la API (URL de función de AWS Lambda).
-// El script scripts/publicar_frontend.sh reemplaza este archivo al desplegar.
+// Para pruebas locales con scripts/servidor_local.py usa "http://localhost:8787".
 window.MIRITMO_CONFIG = {
-  apiUrl: "http://localhost:8787",
+  apiUrl: "https://jaqdhe4yffqneg5kw2khwzz3pm0gztrw.lambda-url.us-east-2.on.aws",
 };

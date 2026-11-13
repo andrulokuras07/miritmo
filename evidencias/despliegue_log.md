@@ -503,3 +503,300 @@ _2026-11-13 11:59_ · código de salida 0
     "Statement": "{\"Sid\":\"url-publica-invocar\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-east-2:299335570017:function:miritmo-api\",\"Condition\":{\"Bool\":{\"lambda:InvokedViaFunctionUrl\":\"true\"}}}"
 }
 ```
+
+## 36. S3: subir dia.html
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> aws s3 cp dia.html s3://miritmo-frontend-5e016053/dia.html --content-type "text/html; charset=utf-8" --profile miritmo --region us-east-2
+Completed 4.5 KiB/4.5 KiB (12.5 KiB/s) with 1 file(s) remaining
+upload: .\dia.html to s3://miritmo-frontend-5e016053/dia.html
+```
+
+## 37. S3: subir index.html
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> aws s3 cp index.html s3://miritmo-frontend-5e016053/index.html --content-type "text/html; charset=utf-8" --profile miritmo --region us-east-2
+Completed 3.2 KiB/3.2 KiB (8.6 KiB/s) with 1 file(s) remaining
+upload: .\index.html to s3://miritmo-frontend-5e016053/index.html
+```
+
+## 38. S3: subir css/estilos.css
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> aws s3 cp css/estilos.css s3://miritmo-frontend-5e016053/css/estilos.css --content-type "text/css; charset=utf-8" --profile miritmo --region us-east-2
+Completed 7.0 KiB/7.0 KiB (22.9 KiB/s) with 1 file(s) remaining
+upload: css\estilos.css to s3://miritmo-frontend-5e016053/css/estilos.css
+```
+
+## 39. S3: subir img/icono.svg
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> aws s3 cp img/icono.svg s3://miritmo-frontend-5e016053/img/icono.svg --content-type image/svg+xml --profile miritmo --region us-east-2
+Completed 335 Bytes/335 Bytes (1.0 KiB/s) with 1 file(s) remaining
+upload: img\icono.svg to s3://miritmo-frontend-5e016053/img/icono.svg
+```
+
+## 40. S3: subir js/acceso.js
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> aws s3 cp js/acceso.js s3://miritmo-frontend-5e016053/js/acceso.js --content-type "application/javascript; charset=utf-8" --profile miritmo --region us-east-2
+Completed 2.0 KiB/2.0 KiB (6.1 KiB/s) with 1 file(s) remaining
+upload: js\acceso.js to s3://miritmo-frontend-5e016053/js/acceso.js
+```
+
+## 41. S3: subir js/comun.js
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> aws s3 cp js/comun.js s3://miritmo-frontend-5e016053/js/comun.js --content-type "application/javascript; charset=utf-8" --profile miritmo --region us-east-2
+Completed 4.2 KiB/4.2 KiB (14.0 KiB/s) with 1 file(s) remaining
+upload: js\comun.js to s3://miritmo-frontend-5e016053/js/comun.js
+```
+
+## 42. S3: subir js/config.js
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> aws s3 cp js/config.js s3://miritmo-frontend-5e016053/js/config.js --content-type "application/javascript; charset=utf-8" --profile miritmo --region us-east-2
+Completed 244 Bytes/244 Bytes (571 Bytes/s) with 1 file(s) remaining
+upload: js\config.js to s3://miritmo-frontend-5e016053/js/config.js
+```
+
+## 43. S3: subir js/dia.js
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> aws s3 cp js/dia.js s3://miritmo-frontend-5e016053/js/dia.js --content-type "application/javascript; charset=utf-8" --profile miritmo --region us-east-2
+Completed 3.4 KiB/3.4 KiB (10.4 KiB/s) with 1 file(s) remaining
+upload: js\dia.js to s3://miritmo-frontend-5e016053/js/dia.js
+```
+
+## 44. S3: objetos del bucket
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> aws s3api list-objects-v2 --bucket miritmo-frontend-5e016053 --profile miritmo --region us-east-2 --query Contents[].[Key,Size] --output text
+css/estilos.css	7157
+dia.html	4566
+img/icono.svg	335
+index.html	3325
+js/acceso.js	2083
+js/comun.js	4340
+js/config.js	244
+js/dia.js	3508
+```
+
+## 45. CloudFront: invalidar /*
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> aws cloudfront create-invalidation --profile miritmo --region us-east-1 --distribution-id E1C3936GEOWFBQ --paths /* --query Invalidation.{Id:Id,Estado:Status}
+{
+    "Id": "IC2RMBT2FGCTI1U7F8D8B5SP28",
+    "Estado": "InProgress"
+}
+```
+
+## 46. CloudFront: estado de la distribución
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> aws cloudfront get-distribution --id E1C3936GEOWFBQ --profile miritmo --region us-east-1 --query Distribution.{Estado:Status,Habilitada:DistributionConfig.Enabled,Dominio:DomainName,Raiz:DistributionConfig.DefaultRootObject,Protocolo:DistributionConfig.DefaultCacheBehavior.ViewerProtocolPolicy,OAC:DistributionConfig.Origins.Items[0].OriginAccessControlId}
+{
+    "Estado": "Deployed",
+    "Habilitada": true,
+    "Dominio": "dnfx295km7eni.cloudfront.net",
+    "Raiz": "index.html",
+    "Protocolo": "redirect-to-https",
+    "OAC": "E2LN3JMLIJCR54"
+}
+```
+
+## 47. Prueba: HTTP redirige a HTTPS
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> curl.exe -s -o NUL -w "%{http_code} -> %{redirect_url}" http://dnfx295km7eni.cloudfront.net/
+301 -> https://dnfx295km7eni.cloudfront.net/
+```
+
+## 48. Prueba: HTTPS sirve index.html y config.js
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> curl.exe -s -o NUL -w "index: %{http_code} %{content_type}" https://dnfx295km7eni.cloudfront.net/
+index: 200 text/html; charset=utf-8
+```
+
+## 49. Prueba: el bucket S3 no es accesible directo
+
+_2026-11-13 12:00_ · código de salida 0
+
+```
+> curl.exe -s -o NUL -w %{http_code} https://miritmo-frontend-5e016053.s3.us-east-2.amazonaws.com/index.html
+403
+```
+
+## 50. Cloudant: registro de A sigue en 84 tras el intento de B
+
+_2026-11-13 12:02_ · código de salida 0
+
+```
+> python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\con_cloudant.py python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\cloudant_util.py ver registros pruebaa-20261113120150@miritmo.mx:2026-11-13
+{"_id": "pruebaa-20261113120150@miritmo.mx:2026-11-13", "usuario": "pruebaa-20261113120150@miritmo.mx", "fecha": "2026-11-13", "horas_trabajo": 6.0, "tareas": 4, "horas_sueno": 7.5, "energia": 4, "calificacion": 84, "actualizado": "2026-11-13T18:01:56+00:00"}
+```
+
+## 51. Cloudant: el registro de B quedó con usuario=B (se ignoró usuario=A del cuerpo)
+
+_2026-11-13 12:02_ · código de salida 0
+
+```
+> python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\con_cloudant.py python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\cloudant_util.py ver registros pruebab-20261113120150@miritmo.mx:2026-11-13
+{"_id": "pruebab-20261113120150@miritmo.mx:2026-11-13", "usuario": "pruebab-20261113120150@miritmo.mx", "fecha": "2026-11-13", "horas_trabajo": 0.0, "tareas": 0, "horas_sueno": 0.0, "energia": 1, "calificacion": 10, "actualizado": "2026-11-13T18:01:59+00:00"}
+```
+
+## 52. Cloudant: documento de usuario (hash y sal, sin contraseña)
+
+_2026-11-13 12:02_ · código de salida 0
+
+```
+> python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\con_cloudant.py python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\cloudant_util.py ver usuarios pruebaa-20261113120150@miritmo.mx
+{"_id": "pruebaa-20261113120150@miritmo.mx", "nombre": "Prueba A", "correo": "pruebaa-20261113120150@miritmo.mx", "hash": "893fcad5591cba62099cf7b559bcc83ef745d4f21ce0edaca076cfa91cbb612d", "sal": "0f7eb312af4b988aa0efed271903829e", "creado": "2026-11-13T18:01:51+00:00"}
+```
+
+## 53. Pruebas de aceptación con curl (RF-01 a RF-04 y RNF-02)
+
+_2026-11-13 12:02_ · código de salida 0
+
+```
+> powershell -ExecutionPolicy Bypass -File evidencias\pruebas_curl.ps1
+MiRitmo - pruebas con curl contra https://jaqdhe4yffqneg5kw2khwzz3pm0gztrw.lambda-url.us-east-2.on.aws
+Hoy (CDMX): 2026-11-13
+
+[OK ] RF-01   Crear cuenta nueva                                         HTTP 201  token recibido (oculto)
+[OK ] RF-01   Crear cuenta con el mismo correo                           HTTP 409  Ya existe una cuenta con ese correo.
+[OK ] RF-01   Crear cuenta con contraseña de 7 caracteres                HTTP 400  Revisa los datos marcados.
+[OK ] RF-02   Iniciar sesión con datos correctos                         HTTP 200  token recibido (oculto)
+[OK ] RF-02   Iniciar sesión con contraseña incorrecta                   HTTP 401  Correo o contraseña incorrectos.
+[OK ] RF-03   Guardar registro de hoy (2026-11-13)                       HTTP 200  calificación 71
+[OK ] RF-03   Guardar registro con fecha futura (2026-11-14)             HTTP 400  No puedes registrar días futuros.
+[OK ] RF-03   Guardar registro de hace 7 días (2026-11-06)               HTTP 400  Solo puedes registrar hoy o los 6 días anteriores.
+[OK ] RF-04   6 h, 4 tareas, 7.5 h sueño, energía 4 (esperado 84)        HTTP 200  calificación 84
+[OK ] RNF-02  PUT sin token                                              HTTP 401  Tu sesión no es válida o expiró. Inicia sesión de nuevo.
+[OK ] RNF-02  PUT con token alterado                                     HTTP 401  Tu sesión no es válida o expiró. Inicia sesión de nuevo.
+[OK ] RNF-02  Usuario B manda usuario=A en el cuerpo (se guarda como B)  HTTP 200  calificación 10
+[OK ] RNF-02  Usuario B intenta la ruta /registros/<correo A>:<fecha>    HTTP 400  Fecha inválida.
+
+Resultado: 13 de 13 pruebas como se esperaba.
+Cuentas de prueba: pruebaA-20261113120232@miritmo.mx y pruebaB-20261113120232@miritmo.mx
+```
+
+## 54. CORS: petición desde un origen que no es CloudFront
+
+_2026-11-13 12:02_ · código de salida 0
+
+```
+> curl.exe -s -w " HTTP %{http_code}" -X POST https://jaqdhe4yffqneg5kw2khwzz3pm0gztrw.lambda-url.us-east-2.on.aws/sesiones -H "Origin: https://otro-sitio.example" -H "content-type: application/json" --data-binary {}
+{"error": "Origen no permitido."} HTTP 403
+```
+
+## 55. CORS: preflight desde CloudFront
+
+_2026-11-13 12:02_ · código de salida 0
+
+```
+> curl.exe -s -o NUL -D - -X OPTIONS https://jaqdhe4yffqneg5kw2khwzz3pm0gztrw.lambda-url.us-east-2.on.aws/registros/2026-11-13 -H "Origin: https://dnfx295km7eni.cloudfront.net" -H "Access-Control-Request-Method: PUT" -H "Access-Control-Request-Headers: authorization,content-type"
+HTTP/1.1 200 OK
+Date: Fri, 13 Nov 2026 18:02:55 GMT
+Content-Type: application/json
+Content-Length: 0
+Connection: keep-alive
+x-amzn-RequestId: 4755815b-667d-43fd-9e9a-675fde536d3a
+Access-Control-Allow-Origin: https://dnfx295km7eni.cloudfront.net
+Access-Control-Allow-Headers: content-type,authorization
+Vary: Origin
+Access-Control-Allow-Methods: GET,POST,PUT
+Access-Control-Max-Age: 300
+```
+
+## 56. CloudWatch Logs: grupo de la función
+
+_2026-11-13 12:02_ · código de salida 0
+
+```
+> aws logs describe-log-groups --profile miritmo --region us-east-2 --log-group-name-prefix /aws/lambda/miritmo-api --query logGroups[].[logGroupName,arn] --output text
+/aws/lambda/miritmo-api	arn:aws:logs:us-east-2:299335570017:log-group:/aws/lambda/miritmo-api:*
+```
+
+## 57. CloudWatch Logs: buscar errores (Traceback, ERROR, Task timed out)
+
+_2026-11-13 12:03_ · código de salida 0
+
+```
+> aws logs filter-log-events --profile miritmo --region us-east-2 --log-group-name /aws/lambda/miritmo-api --filter-pattern "?Traceback ?ERROR ?"Task timed out"" --query length(events)
+0
+```
+
+## 58. CloudWatch Logs: últimas líneas REPORT (duración y memoria)
+
+_2026-11-13 12:03_ · código de salida 0
+
+```
+> aws logs filter-log-events --profile miritmo --region us-east-2 --log-group-name /aws/lambda/miritmo-api --filter-pattern REPORT --query events[-3:].message --output text
+REPORT RequestId: 721c3476-35c0-4dc0-8062-1aea3fe75298	Duration: 80.90 ms	Billed Duration: 81 ms	Memory Size: 256 MB	Max Memory Used: 99 MB	
+	REPORT RequestId: 12bb6917-c4b9-423c-86c5-d81b38e495da	Duration: 1.65 ms	Billed Duration: 2 ms	Memory Size: 256 MB	Max Memory Used: 99 MB	
+	REPORT RequestId: 7427fa22-b5d5-493b-88b2-8d4d28f8abbc	Duration: 7.95 ms	Billed Duration: 8 ms	Memory Size: 256 MB	Max Memory Used: 99 MB
+```
+
+## 59. Cuenta demo creada (demo@miritmo.mx, contraseña no registrada) con registro de hoy = 84; documento en Cloudant
+
+_2026-11-13 12:03_ · código de salida 0
+
+```
+> python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\con_cloudant.py python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\cloudant_util.py ver registros demo@miritmo.mx:2026-11-13
+{"_id": "demo@miritmo.mx:2026-11-13", "usuario": "demo@miritmo.mx", "fecha": "2026-11-13", "horas_trabajo": 6.0, "tareas": 4, "horas_sueno": 7.5, "energia": 4, "calificacion": 84, "actualizado": "2026-11-13T18:03:19+00:00"}
+```
+
+## 60. Cloudant: borrar cuentas y registros de prueba (_id que empieza con 'prueba')
+
+_2026-11-13 12:03_ · código de salida 0
+
+```
+> python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\con_cloudant.py python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\cloudant_util.py borrar-prefijo prueba
+borrado usuarios/pruebaa-20261113120150@miritmo.mx
+borrado usuarios/pruebaa-20261113120232@miritmo.mx
+borrado usuarios/pruebab-20261113120150@miritmo.mx
+borrado usuarios/pruebab-20261113120232@miritmo.mx
+borrado registros/pruebaa-20261113120150@miritmo.mx:2026-11-13
+borrado registros/pruebaa-20261113120232@miritmo.mx:2026-11-13
+borrado registros/pruebab-20261113120150@miritmo.mx:2026-11-13
+borrado registros/pruebab-20261113120232@miritmo.mx:2026-11-13
+```
+
+## 61. Cloudant: documentos que quedan
+
+_2026-11-13 12:03_ · código de salida 0
+
+```
+> python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\con_cloudant.py python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\cloudant_util.py listar
+usuarios: ['demo@miritmo.mx']
+registros: ['demo@miritmo.mx:2026-11-13']
+```

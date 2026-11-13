@@ -1,0 +1,27 @@
+{
+  "CallerReference": "miritmo-entregable1-20261113",
+  "Comment": "MiRitmo miritmo-frontend-5e016053",
+  "Enabled": true,
+  "DefaultRootObject": "index.html",
+  "PriceClass": "PriceClass_100",
+  "HttpVersion": "http2and3",
+  "Origins": {
+    "Quantity": 1,
+    "Items": [{
+      "Id": "s3-miritmo",
+      "DomainName": "miritmo-frontend-5e016053.s3.us-east-2.amazonaws.com",
+      "OriginAccessControlId": "E2LN3JMLIJCR54",
+      "S3OriginConfig": { "OriginAccessIdentity": "" }
+    }]
+  },
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "s3-miritmo",
+    "ViewerProtocolPolicy": "redirect-to-https",
+    "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+    "Compress": true,
+    "AllowedMethods": {
+      "Quantity": 2, "Items": ["GET", "HEAD"],
+      "CachedMethods": { "Quantity": 2, "Items": ["GET", "HEAD"] }
+    }
+  }
+}

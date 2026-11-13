@@ -1,0 +1,11 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Sid": "SoloCloudFront",
+    "Effect": "Allow",
+    "Principal": { "Service": "cloudfront.amazonaws.com" },
+    "Action": "s3:GetObject",
+    "Resource": "arn:aws:s3:::miritmo-frontend-5e016053/*",
+    "Condition": { "StringEquals": { "AWS:SourceArn": "arn:aws:cloudfront::299335570017:distribution/E1C3936GEOWFBQ" } }
+  }]
+}

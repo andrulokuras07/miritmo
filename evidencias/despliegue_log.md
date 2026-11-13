@@ -264,3 +264,148 @@ _2026-11-13 11:56_ · código de salida 0
 Base 'usuarios' creada.
   Base 'registros' creada.
 ```
+
+## 18. S3: crear bucket privado en us-east-2
+
+_2026-11-13 11:57_ · código de salida 0
+
+```
+> aws s3api create-bucket --bucket miritmo-frontend-5e016053 --region us-east-2 --create-bucket-configuration LocationConstraint=us-east-2 --profile miritmo
+{
+    "Location": "http://miritmo-frontend-5e016053.s3.amazonaws.com/",
+    "BucketArn": "arn:aws:s3:::miritmo-frontend-5e016053"
+}
+```
+
+## 19. S3: activar Bloquear todo el acceso público
+
+_2026-11-13 11:57_ · código de salida 0
+
+```
+> aws s3api put-public-access-block --bucket miritmo-frontend-5e016053 --region us-east-2 --profile miritmo --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+
+```
+
+## 20. S3: comprobar bloqueo de acceso público
+
+_2026-11-13 11:57_ · código de salida 0
+
+```
+> aws s3api get-public-access-block --bucket miritmo-frontend-5e016053 --region us-east-2 --profile miritmo
+{
+    "PublicAccessBlockConfiguration": {
+        "BlockPublicAcls": true,
+        "IgnorePublicAcls": true,
+        "BlockPublicPolicy": true,
+        "RestrictPublicBuckets": true
+    }
+}
+```
+
+## 21. S3: región del bucket
+
+_2026-11-13 11:57_ · código de salida 0
+
+```
+> aws s3api get-bucket-location --bucket miritmo-frontend-5e016053 --region us-east-2 --profile miritmo
+{
+    "LocationConstraint": "us-east-2"
+}
+```
+
+## 22. CloudFront: crear Origin Access Control
+
+_2026-11-13 11:57_ · código de salida 0
+
+```
+> aws cloudfront create-origin-access-control --profile miritmo --region us-east-1 --origin-access-control-config "Name=miritmo-oac,Description=OAC de MiRitmo,SigningProtocol=sigv4,SigningBehavior=always,OriginAccessControlOriginType=s3" --query OriginAccessControl.{Id:Id,Name:OriginAccessControlConfig.Name,Firma:OriginAccessControlConfig.SigningBehavior}
+{
+    "Id": "E2LN3JMLIJCR54",
+    "Name": "miritmo-oac",
+    "Firma": "always"
+}
+```
+
+## 23. CloudFront: crear distribución (origen S3 con OAC, redirect-to-https, index.html)
+
+_2026-11-13 11:57_ · código de salida 0
+
+```
+> aws cloudfront create-distribution --profile miritmo --region us-east-1 --distribution-config file://evidencias/config/cloudfront.json --query Distribution.{Id:Id,ARN:ARN,Dominio:DomainName,Estado:Status}
+{
+    "Id": "E1C3936GEOWFBQ",
+    "ARN": "arn:aws:cloudfront::299335570017:distribution/E1C3936GEOWFBQ",
+    "Dominio": "dnfx295km7eni.cloudfront.net",
+    "Estado": "InProgress"
+}
+```
+
+## 24. S3: política del bucket (solo la distribución E1C3936GEOWFBQ puede leer)
+
+_2026-11-13 11:57_ · código de salida 0
+
+```
+> aws s3api put-bucket-policy --bucket miritmo-frontend-5e016053 --region us-east-2 --profile miritmo --policy file://evidencias/config/politica-bucket.json
+
+```
+
+## 25. S3: estado de la política (no pública)
+
+_2026-11-13 11:57_ · código de salida 0
+
+```
+> aws s3api get-bucket-policy-status --bucket miritmo-frontend-5e016053 --region us-east-2 --profile miritmo
+{
+    "PolicyStatus": {
+        "IsPublic": false
+    }
+}
+```
+
+## 26. IAM: crear rol miritmo-lambda-rol (confianza: lambda.amazonaws.com de esta cuenta)
+
+_2026-11-13 11:57_ · código de salida 0
+
+```
+> aws iam create-role --profile miritmo --role-name miritmo-lambda-rol --description "Rol de la Lambda de MiRitmo: solo CloudWatch Logs" --assume-role-policy-document file://evidencias/config/confianza-lambda.json --query Role.{Nombre:RoleName,ARN:Arn}
+{
+    "Nombre": "miritmo-lambda-rol",
+    "ARN": "arn:aws:iam::299335570017:role/miritmo-lambda-rol"
+}
+```
+
+## 27. IAM: adjuntar solo AWSLambdaBasicExecutionRole
+
+_2026-11-13 11:57_ · código de salida 0
+
+```
+> aws iam attach-role-policy --profile miritmo --role-name miritmo-lambda-rol --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+```
+
+## 28. IAM: políticas del rol
+
+_2026-11-13 11:58_ · código de salida 0
+
+```
+> aws iam list-attached-role-policies --profile miritmo --role-name miritmo-lambda-rol
+{
+    "AttachedPolicies": [
+        {
+            "PolicyName": "AWSLambdaBasicExecutionRole",
+            "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        }
+    ]
+}
+```
+
+## 29. IAM: políticas en línea del rol (debe estar vacío)
+
+_2026-11-13 11:58_ · código de salida 0
+
+```
+> aws iam list-role-policies --profile miritmo --role-name miritmo-lambda-rol
+{
+    "PolicyNames": []
+}
+```

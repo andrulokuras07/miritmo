@@ -198,6 +198,16 @@ class PruebasRegistros(Base):
                 self.assertIn(next(iter(cambio)), cuerpo["campos"])
         self.assertEqual(self.almacen.registros, {})
 
+    def test_nan_e_infinity_responden_400(self):
+        token = self.token()
+        for campo in ("horas_trabajo", "tareas", "horas_sueno", "energia"):
+            for valor in (float("nan"), float("inf"), float("-inf")):
+                with self.subTest(campo=campo, valor=valor):
+                    estado, cuerpo, _ = peticion("PUT", f"/registros/{HOY}", {**DIA, campo: valor}, token=token)
+                    self.assertEqual(estado, 400)
+                    self.assertIn(campo, cuerpo["campos"])
+        self.assertEqual(self.almacen.registros, {})
+
     def test_sin_token_responde_401(self):
         estado, _, _ = peticion("PUT", f"/registros/{HOY}", DIA)
         self.assertEqual(estado, 401)

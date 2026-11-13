@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiRitmo · Mi semana</title>
+  <link rel="icon" href="img/icono.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css">
+  <!-- Sin sesión no se muestra la página (RF-02) -->
+  <script src="js/config.js"></script>
+  <script src="js/comun.js"></script>
+  <script>MiRitmo.exigirSesion();</script>
+</head>
+<body>
+  <main class="contenedor">
+    <header class="barra">
+      <a class="marca" href="dia.html">
+        <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="16" width="5" height="12" rx="2" fill="currentColor" opacity=".45"/><rect x="13.5" y="9" width="5" height="19" rx="2" fill="currentColor" opacity=".7"/><rect x="23" y="4" width="5" height="24" rx="2" fill="currentColor"/></svg>
+        MiRitmo
+      </a>
+      <button id="salir" class="boton-secundario" type="button">Cerrar sesión</button>
+    </header>
+
+    <p class="saludo" id="saludo"></p>
+
+    <nav class="pestanas" aria-label="Secciones">
+      <a href="dia.html">Mi día</a>
+      <a href="semana.html" aria-current="page">Mi semana</a>
+    </nav>
+
+    <div id="alerta" class="alerta" role="alert" hidden></div>
+
+    <!-- RF-07: resumen de la semana -->
+    <section class="resumen" aria-label="Resumen de la semana">
+      <div class="dato">
+        <span class="dato-etiqueta">Promedio</span>
+        <span class="dato-valor" id="promedio">–</span>
+        <span class="dato-nota" id="registrados">&nbsp;</span>
+      </div>
+      <div class="dato">
+        <span class="dato-etiqueta">Mejor día</span>
+        <span class="dato-valor" id="mejor">–</span>
+        <span class="dato-nota" id="mejor-fecha">&nbsp;</span>
+      </div>
+    </section>
+
+    <!-- RF-06: gráfica de los últimos 7 días -->
+    <section class="tarjeta">
+      <h1>Mi semana</h1>
+      <p class="sub" id="rango"></p>
+      <div class="grafica">
+        <canvas id="grafica" role="img" aria-label="Gráfica de barras con la calificación de los últimos 7 días"></canvas>
+      </div>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Día por día</h2>
+      <ul class="dias" id="dias"></ul>
+    </section>
+  </main>
+
+  <script src="vendor/chart.umd.min.js"></script>
+  <script src="js/semana.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiRitmo · Acceso</title>
+  <meta name="description" content="Mide tu rendimiento diario en menos de un minuto.">
+  <link rel="icon" href="img/icono.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <main class="contenedor">
+    <header class="portada">
+      <span class="marca">
+        <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="16" width="5" height="12" rx="2" fill="currentColor" opacity=".45"/><rect x="13.5" y="9" width="5" height="19" rx="2" fill="currentColor" opacity=".7"/><rect x="23" y="4" width="5" height="24" rx="2" fill="currentColor"/></svg>
+        MiRitmo
+      </span>
+      <p>Registra tu día en menos de un minuto y conoce tu calificación.</p>
+    </header>
+
+    <div class="pestanas" role="tablist" aria-label="Acceso">
+      <button type="button" role="tab" id="tab-entrar" aria-selected="true" aria-controls="form-entrar">Iniciar sesión</button>
+      <button type="button" role="tab" id="tab-cuenta" aria-selected="false" aria-controls="form-cuenta">Crear cuenta</button>
+    </div>
+
+    <section class="tarjeta">
+      <div id="alerta" class="alerta" role="alert" hidden></div>
+
+      <form id="form-entrar" role="tabpanel" aria-labelledby="tab-entrar" novalidate>
+        <div class="campo">
+          <label for="entrar-correo">Correo</label>
+          <input id="entrar-correo" name="correo" type="email" autocomplete="email" inputmode="email" required>
+          <p class="error-campo" data-error="correo"></p>
+        </div>
+        <div class="campo">
+          <label for="entrar-contrasena">Contraseña</label>
+          <input id="entrar-contrasena" name="contrasena" type="password" autocomplete="current-password" required>
+          <p class="error-campo" data-error="contrasena"></p>
+        </div>
+        <button class="boton" type="submit">Iniciar sesión</button>
+      </form>
+
+      <form id="form-cuenta" role="tabpanel" aria-labelledby="tab-cuenta" novalidate hidden>
+        <div class="campo">
+          <label for="cuenta-nombre">Nombre</label>
+          <input id="cuenta-nombre" name="nombre" type="text" autocomplete="name" maxlength="60" required>
+          <p class="error-campo" data-error="nombre"></p>
+        </div>
+        <div class="campo">
+          <label for="cuenta-correo">Correo</label>
+          <input id="cuenta-correo" name="correo" type="email" autocomplete="email" inputmode="email" required>
+          <p class="error-campo" data-error="correo"></p>
+        </div>
+        <div class="campo">
+          <label for="cuenta-contrasena">Contraseña <span class="ayuda">(mínimo 8 caracteres)</span></label>
+          <input id="cuenta-contrasena" name="contrasena" type="password" autocomplete="new-password" minlength="8" required>
+          <p class="error-campo" data-error="contrasena"></p>
+        </div>
+        <button class="boton" type="submit">Crear cuenta</button>
+      </form>
+    </section>
+
+    <p class="pie">MiRitmo · Infraestructura y Cómputo en la Nube</p>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/comun.js"></script>
+  <script src="js/acceso.js"></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiRitmo · Mi día</title>
+  <link rel="icon" href="img/icono.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css">
+  <!-- Sin sesión no se muestra la página (RF-02) -->
+  <script src="js/config.js"></script>
+  <script src="js/comun.js"></script>
+  <script>MiRitmo.exigirSesion();</script>
+</head>
+<body>
+  <main class="contenedor">
+    <header class="barra">
+      <a class="marca" href="dia.html">
+        <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="16" width="5" height="12" rx="2" fill="currentColor" opacity=".45"/><rect x="13.5" y="9" width="5" height="19" rx="2" fill="currentColor" opacity=".7"/><rect x="23" y="4" width="5" height="24" rx="2" fill="currentColor"/></svg>
+        MiRitmo
+      </a>
+      <button id="salir" class="boton-secundario" type="button">Cerrar sesión</button>
+    </header>
+
+    <p class="saludo" id="saludo"></p>
+
+    <nav class="pestanas" aria-label="Secciones">
+      <a href="dia.html" aria-current="page">Mi día</a>
+      <a href="semana.html">Mi semana</a>
+    </nav>
+
+    <form id="form-dia" class="tarjeta" novalidate>
+      <h1>Mi día</h1>
+      <p class="sub">Captura tus cuatro datos y guarda para ver tu calificación.</p>
+      <div id="alerta" class="alerta" role="alert" hidden></div>
+      <div id="aviso" class="alerta info" aria-live="polite" hidden></div>
+
+      <div class="campo">
+        <label for="fecha">Fecha</label>
+        <select id="fecha" name="fecha"></select>
+        <p class="error-campo" data-error="fecha"></p>
+      </div>
+
+      <div class="campo">
+        <label for="horas_trabajo">Horas de estudio o trabajo <span class="ayuda">(0 a 16)</span></label>
+        <div class="paso">
+          <button type="button" data-paso="-" aria-label="Restar media hora de estudio">−</button>
+          <input id="horas_trabajo" name="horas_trabajo" type="number" inputmode="decimal" min="0" max="16" step="0.5" data-inicio="0" placeholder="0">
+          <button type="button" data-paso="+" aria-label="Sumar media hora de estudio">+</button>
+        </div>
+        <p class="error-campo" data-error="horas_trabajo"></p>
+      </div>
+
+      <div class="campo">
+        <label for="tareas">Tareas completadas <span class="ayuda">(0 a 20)</span></label>
+        <div class="paso">
+          <button type="button" data-paso="-" aria-label="Restar una tarea">−</button>
+          <input id="tareas" name="tareas" type="number" inputmode="numeric" min="0" max="20" step="1" data-inicio="0" placeholder="0">
+          <button type="button" data-paso="+" aria-label="Sumar una tarea">+</button>
+        </div>
+        <p class="error-campo" data-error="tareas"></p>
+      </div>
+
+      <div class="campo">
+        <label for="horas_sueno">Horas de sueño <span class="ayuda">(0 a 14)</span></label>
+        <div class="paso">
+          <button type="button" data-paso="-" aria-label="Restar media hora de sueño">−</button>
+          <input id="horas_sueno" name="horas_sueno" type="number" inputmode="decimal" min="0" max="14" step="0.5" data-inicio="7" placeholder="7">
+          <button type="button" data-paso="+" aria-label="Sumar media hora de sueño">+</button>
+        </div>
+        <p class="error-campo" data-error="horas_sueno"></p>
+      </div>
+
+      <div class="campo">
+        <span class="etiqueta" id="energia-etiqueta">Nivel de energía</span>
+        <fieldset class="energia" aria-labelledby="energia-etiqueta">
+          <input type="radio" name="energia" id="energia-1" value="1"><label for="energia-1">1</label>
+          <input type="radio" name="energia" id="energia-2" value="2"><label for="energia-2">2</label>
+          <input type="radio" name="energia" id="energia-3" value="3"><label for="energia-3">3</label>
+          <input type="radio" name="energia" id="energia-4" value="4"><label for="energia-4">4</label>
+          <input type="radio" name="energia" id="energia-5" value="5"><label for="energia-5">5</label>
+        </fieldset>
+        <div class="extremos"><span>Muy baja</span><span>Muy alta</span></div>
+        <p class="error-campo" data-error="energia"></p>
+      </div>
+
+      <button class="boton" type="submit">Guardar mi día</button>
+    </form>
+
+    <section id="resultado" class="tarjeta resultado" aria-live="polite" hidden>
+      <h2>Tu calificación</h2>
+      <p class="numero"><span id="calificacion">0</span><small> / 100</small></p>
+      <p class="nivel" id="nivel"></p>
+      <div class="medidor" aria-hidden="true"><span id="medidor"></span></div>
+      <p class="detalle" id="detalle"></p>
+    </section>
+  </main>
+
+  <script src="js/dia.js"></script>
+</body>
+</html>

@@ -409,3 +409,97 @@ _2026-11-13 11:58_ · código de salida 0
     "PolicyNames": []
 }
 ```
+
+## 30. Empaquetar Lambda con dependencias manylinux2014_x86_64 (Python 3.12)
+
+_2026-11-13 11:58_ · código de salida 0
+
+```
+> python scripts/empaquetar_lambda.py
+C:\Users\aangu\OneDrive\Documentos\Escuela\Anahuac\Semestre7\Cómputo en la Nube\MiRitmo\entregable-1\build\miritmo-lambda.zip: 886 archivos, 1.5 MB
+```
+
+## 31. Lambda: crear función miritmo-api (Python 3.12, x86_64, 10 s, 256 MB; variables desde archivo temporal, no se muestran)
+
+_2026-11-13 11:59_ · código de salida 0
+
+```
+> aws lambda create-function --profile miritmo --region us-east-2 --function-name miritmo-api --runtime python3.12 --architectures x86_64 --handler lambda_function.lambda_handler --role arn:aws:iam::299335570017:role/miritmo-lambda-rol --timeout 10 --memory-size 256 --description "API de MiRitmo (Entregable 1)" --zip-file "fileb://C:\Users\aangu\OneDrive\Documentos\Escuela\Anahuac\Semestre7\Cómputo en la Nube\MiRitmo\entregable-1\build\miritmo-lambda.zip" --environment file://C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\tmpjnobf787.json --query {Nombre:FunctionName,ARN:FunctionArn,Runtime:Runtime,Arquitectura:Architectures[0],Timeout:Timeout,Memoria:MemorySize,Estado:State,Variables:keys(Environment.Variables)}
+{
+    "Nombre": "miritmo-api",
+    "ARN": "arn:aws:lambda:us-east-2:299335570017:function:miritmo-api",
+    "Runtime": "python3.12",
+    "Arquitectura": "x86_64",
+    "Timeout": 10,
+    "Memoria": 256,
+    "Estado": "Pending",
+    "Variables": [
+        "CLOUDANT_URL",
+        "CLOUDANT_APIKEY",
+        "TOKEN_SECRET",
+        "ALLOWED_ORIGIN"
+    ]
+}
+```
+
+## 32. Lambda: crear URL de función (auth NONE) con CORS solo para el dominio de CloudFront
+
+_2026-11-13 11:59_ · código de salida 254
+
+```
+> aws lambda create-function-url-config --profile miritmo --region us-east-2 --function-name miritmo-api --auth-type NONE --cors file://evidencias/config/cors-lambda.json
+[stderr]
+
+aws: [ERROR]: An error occurred (ValidationException) when calling the CreateFunctionUrlConfig operation: 1 validation error detected: Value '[GET, POST, PUT, OPTIONS]' at 'cors.allowMethods' failed to satisfy constraint: Member must satisfy constraint: [Member must have length less than or equal to 6, Member must have length greater than or equal to 0, Member must satisfy regular expression pattern: .*, Member must not be null]
+```
+
+## 33. Lambda: crear URL de función (auth NONE) con CORS (GET, POST, PUT; OPTIONS lo responde la URL de función automáticamente)
+
+_2026-11-13 11:59_ · código de salida 0
+
+```
+> aws lambda create-function-url-config --profile miritmo --region us-east-2 --function-name miritmo-api --auth-type NONE --cors file://evidencias/config/cors-lambda.json
+{
+    "FunctionUrl": "https://jaqdhe4yffqneg5kw2khwzz3pm0gztrw.lambda-url.us-east-2.on.aws/",
+    "FunctionArn": "arn:aws:lambda:us-east-2:299335570017:function:miritmo-api",
+    "AuthType": "NONE",
+    "Cors": {
+        "AllowHeaders": [
+            "content-type",
+            "authorization"
+        ],
+        "AllowMethods": [
+            "GET",
+            "POST",
+            "PUT"
+        ],
+        "AllowOrigins": [
+            "https://dnfx295km7eni.cloudfront.net"
+        ],
+        "MaxAge": 300
+    },
+    "CreationTime": "2026-11-13T17:59:33.397825856Z"
+}
+```
+
+## 34. Lambda: permiso público lambda:InvokeFunctionUrl (auth NONE)
+
+_2026-11-13 11:59_ · código de salida 0
+
+```
+> aws lambda add-permission --profile miritmo --region us-east-2 --function-name miritmo-api --statement-id url-publica --action lambda:InvokeFunctionUrl --principal * --function-url-auth-type NONE
+{
+    "Statement": "{\"Sid\":\"url-publica\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"lambda:InvokeFunctionUrl\",\"Resource\":\"arn:aws:lambda:us-east-2:299335570017:function:miritmo-api\",\"Condition\":{\"StringEquals\":{\"lambda:FunctionUrlAuthType\":\"NONE\"}}}"
+}
+```
+
+## 35. Lambda: permiso lambda:InvokeFunction solo vía URL de función
+
+_2026-11-13 11:59_ · código de salida 0
+
+```
+> aws lambda add-permission --profile miritmo --region us-east-2 --function-name miritmo-api --statement-id url-publica-invocar --action lambda:InvokeFunction --principal * --invoked-via-function-url
+{
+    "Statement": "{\"Sid\":\"url-publica-invocar\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-east-2:299335570017:function:miritmo-api\",\"Condition\":{\"Bool\":{\"lambda:InvokedViaFunctionUrl\":\"true\"}}}"
+}
+```

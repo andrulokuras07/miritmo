@@ -1,0 +1,6 @@
+{
+  "AllowOrigins": ["https://dnfx295km7eni.cloudfront.net"],
+  "AllowMethods": ["GET", "POST", "PUT"],
+  "AllowHeaders": ["content-type", "authorization"],
+  "MaxAge": 300
+}

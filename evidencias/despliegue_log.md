@@ -106,3 +106,161 @@ lambda:CreateFunctionUrlConfig	allowed	AdministratorAccess
 lambda:AddPermission	allowed	AdministratorAccess
 lambda:UpdateFunctionConfiguration	allowed	AdministratorAccess
 ```
+
+## 8. IBM Cloud: cuenta y región seleccionadas (login --sso -r us-south hecho antes; código de un solo uso omitido)
+
+_2026-11-13 11:55_ · código de salida 0
+
+```
+> C:\Users\aangu\AppData\Local\Microsoft\WinGet\Links\ibmcloud.exe target
+API endpoint:      https://cloud.ibm.com
+Region:            us-south
+User:              andres.angulo@anahuac.mx
+Account:           Andrés Angulo (f191d50cebbb4ec195285a71fedde14c) <-> 3224975
+Resource group:    No resource group targeted, use 'C:\Users\aangu\AppData\Local\Microsoft\WinGet\Links\ibmcloud.exe target -g RESOURCE_GROUP'
+CF API endpoint:   
+Org:               
+Space:
+```
+
+## 9. Instancia previa Cloudant-cr (Lite, au-syd, sin bases): borrar porque solo se permite una Lite por cuenta
+
+_2026-11-13 11:55_ · código de salida 0
+
+```
+> C:\Users\aangu\AppData\Local\Microsoft\WinGet\Links\ibmcloud.exe resource service-instance-delete Cloudant-cr --recursive -f
+Deleting service instance Cloudant-cr under account Andrés Angulo as andres.angulo@anahuac.mx...
+OK
+Service instance Cloudant-cr with ID crn:v1:bluemix:public:cloudantnosqldb:au-syd:a/f191d50cebbb4ec195285a71fedde14c:cfaec20f-4f60-41b7-86fb-bf732784a0d1:: is deleted successfully
+```
+
+## 10. Reclamaciones pendientes
+
+_2026-11-13 11:55_ · código de salida 0
+
+```
+> C:\Users\aangu\AppData\Local\Microsoft\WinGet\Links\ibmcloud.exe resource reclamations
+List all resource reclamations under account f191d50cebbb4ec195285a71fedde14c as andres.angulo@anahuac.mx...
+OK
+
+ID                                     Resource Instance ID                   Entity CRN                                                                                                               State       Target Time
+a4431e27-847e-4e1f-b34b-ccba8de3de94   cfaec20f-4f60-41b7-86fb-bf732784a0d1   crn:v1:bluemix:public:cloudantnosqldb:au-syd:a/f191d50cebbb4ec195285a71fedde14c:cfaec20f-4f60-41b7-86fb-bf732784a0d1::   SCHEDULED   2026-11-20T17:55:29Z
+```
+
+## 11. Borrar de forma permanente la reclamación de Cloudant-cr
+
+_2026-11-13 11:55_ · código de salida 0
+
+```
+> C:\Users\aangu\AppData\Local\Microsoft\WinGet\Links\ibmcloud.exe resource reclamation-delete a4431e27-847e-4e1f-b34b-ccba8de3de94 -f
+Submitting request to delete resource reclamation a4431e27-847e-4e1f-b34b-ccba8de3de94 under account f191d50cebbb4ec195285a71fedde14c as andres.angulo@anahuac.mx...
+OK
+Request to delete reclamation a4431e27-847e-4e1f-b34b-ccba8de3de94 was submitted
+```
+
+## 12. Seleccionar grupo de recursos Default
+
+_2026-11-13 11:55_ · código de salida 0
+
+```
+> C:\Users\aangu\AppData\Local\Microsoft\WinGet\Links\ibmcloud.exe target -g Default
+Targeted resource group Default
+
+
+                   
+API endpoint:      https://cloud.ibm.com
+Region:            us-south
+User:              andres.angulo@anahuac.mx
+Account:           Andrés Angulo (f191d50cebbb4ec195285a71fedde14c) <-> 3224975
+Resource group:    Default
+CF API endpoint:   
+Org:               
+Space:
+```
+
+## 13. Crear instancia miritmo-cloudant (plan lite, us-south, solo IAM)
+
+_2026-11-13 11:55_ · código de salida 0
+
+```
+> C:\Users\aangu\AppData\Local\Microsoft\WinGet\Links\ibmcloud.exe resource service-instance-create miritmo-cloudant cloudantnosqldb lite us-south -p "{"legacyCredentials": false}"
+Creating service instance miritmo-cloudant in resource group Default of account Andrés Angulo as andres.angulo@anahuac.mx...
+OK
+Service instance miritmo-cloudant was created.
+                  
+Name:             miritmo-cloudant
+ID:               crn:v1:bluemix:public:cloudantnosqldb:us-south:a/f191d50cebbb4ec195285a71fedde14c:6dabef3a-2b91-42fe-9990-863c9ae57483::
+GUID:             6dabef3a-2b91-42fe-9990-863c9ae57483
+Location:         us-south
+State:            provisioning
+Type:             service_instance
+Sub Type:         
+Allow Cleanup:    false
+Locked:           false
+Created at:       2026-11-13T17:55:40Z
+Updated at:       2026-11-13T17:55:48Z
+Last Operation:             
+                  Status    create in progress
+                  Message   Started create instance operation
+```
+
+## 14. Instancia miritmo-cloudant activa
+
+_2026-11-13 11:56_ · código de salida 0
+
+```
+> C:\Users\aangu\AppData\Local\Microsoft\WinGet\Links\ibmcloud.exe resource service-instance miritmo-cloudant
+Retrieving service instance miritmo-cloudant in resource group Default under account Andrés Angulo as andres.angulo@anahuac.mx...
+OK
+                       
+Name:                  miritmo-cloudant
+ID:                    crn:v1:bluemix:public:cloudantnosqldb:us-south:a/f191d50cebbb4ec195285a71fedde14c:6dabef3a-2b91-42fe-9990-863c9ae57483::
+GUID:                  6dabef3a-2b91-42fe-9990-863c9ae57483
+Location:              us-south
+Service Name:          cloudantnosqldb
+Service Plan Name:     lite
+Resource Group Name:   Default
+State:                 active
+Type:                  service_instance
+Sub Type:              
+Locked:                false
+Created at:            2026-11-13T17:55:40Z
+Created by:            andres.angulo@anahuac.mx
+Updated at:            2026-11-13T17:56:06Z
+Last Operation:                  
+                       Status    create succeeded
+                       Message   Provisioning is complete
+```
+
+## 15. Crear credencial de servicio con rol Manager
+
+_2026-11-13 11:56_ · código de salida 0
+
+```
+> C:\Users\aangu\AppData\Local\Microsoft\WinGet\Links\ibmcloud.exe resource service-key-create miritmo-cloudant-cred Manager --instance-name miritmo-cloudant --output json
+name: miritmo-cloudant-cred
+state: active
+role: None
+crn: crn:v1:bluemix:public:cloudantnosqldb:us-south:a/f191d50cebbb4ec195285a71fedde14c:6dabef3a-2b91-42fe-9990-863c9ae57483:resource-key:b0bce5b8-36a7-438a-a64a-2c4e61e5772d
+credentials.iam_role_crn: crn:v1:bluemix:public:iam::::serviceRole:Manager
+(campos con credenciales omitidos)
+```
+
+## 16. Comprobar que la credencial es solo IAM (sin username/password heredados)
+
+_2026-11-13 11:56_ · código de salida 0
+
+```
+> python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\con_cloudant.py --campos
+Campos de la credencial: apikey, host, iam_apikey_description, iam_apikey_id, iam_apikey_name, iam_role_crn, iam_serviceid_crn, url, username
+```
+
+## 17. Crear las bases usuarios y registros (credenciales pasadas por variables de entorno, no se muestran)
+
+_2026-11-13 11:56_ · código de salida 0
+
+```
+> python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\con_cloudant.py python -I "C:\Users\aangu\OneDrive\Documentos\Escuela\Anahuac\Semestre7\Cómputo en la Nube\MiRitmo\entregable-1\scripts\crear_bases_cloudant.py"
+Base 'usuarios' creada.
+  Base 'registros' creada.
+```

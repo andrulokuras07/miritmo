@@ -800,3 +800,93 @@ _2026-11-13 12:03_ · código de salida 0
 usuarios: ['demo@miritmo.mx']
 registros: ['demo@miritmo.mx:2026-11-13']
 ```
+
+## 62. Reempaquetar Lambda (corrección CORS duplicado)
+
+_2026-11-13 12:06_ · código de salida 1
+
+```
+> python scripts/empaquetar_lambda.py
+[stderr]
+Traceback (most recent call last):
+  File "C:\Users\aangu\OneDrive\Documentos\Escuela\Anahuac\Semestre7\Cómputo en la Nube\MiRitmo\entregable-1\scripts\empaquetar_lambda.py", line 48, in <module>
+    main()
+  File "C:\Users\aangu\OneDrive\Documentos\Escuela\Anahuac\Semestre7\Cómputo en la Nube\MiRitmo\entregable-1\scripts\empaquetar_lambda.py", line 22, in main
+    os.makedirs(PAQUETE)
+  File "<frozen os>", line 225, in makedirs
+FileExistsError: [WinError 183] No se puede crear un archivo que ya existe: 'C:\\Users\\aangu\\OneDrive\\Documentos\\Escuela\\Anahuac\\Semestre7\\Cómputo en la Nube\\MiRitmo\\entregable-1\\build\\paquete'
+```
+
+## 63. Lambda: actualizar código (las variables de entorno no cambian)
+
+_2026-11-13 12:06_ · código de salida 0
+
+```
+> aws lambda update-function-code --profile miritmo --region us-east-2 --function-name miritmo-api --zip-file fileb://build/miritmo-lambda.zip --query {Nombre:FunctionName,Estado:LastUpdateStatus,CodeSha256:CodeSha256}
+{
+    "Nombre": "miritmo-api",
+    "Estado": "InProgress",
+    "CodeSha256": "dR7q2P2fEPGZZPwKYaFhVFtftW6T4drtv5d2guAscMg="
+}
+```
+
+## 64. CORS: respuesta real desde el origen de CloudFront (un solo Access-Control-Allow-Origin)
+
+_2026-11-13 12:07_ · código de salida 0
+
+```
+> curl.exe -s -D - -o NUL -X POST https://jaqdhe4yffqneg5kw2khwzz3pm0gztrw.lambda-url.us-east-2.on.aws/sesiones -H "Origin: https://dnfx295km7eni.cloudfront.net" -H "content-type: application/json" --data-binary {}
+HTTP/1.1 400 Bad Request
+Date: Fri, 13 Nov 2026 18:06:59 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 124
+Connection: keep-alive
+x-amzn-RequestId: 9ec307e0-1714-488e-a78f-bbe6a1b72abd
+access-control-allow-origin: https://dnfx295km7eni.cloudfront.net
+access-control-allow-origin: https://dnfx295km7eni.cloudfront.net
+access-control-allow-headers: Content-Type,Authorization
+vary: Origin
+vary: Origin
+access-control-allow-methods: GET,POST,PUT,OPTIONS
+X-Amzn-Trace-Id: Root=1-6af751c3-09e6d6561fc1954407007d08;Parent=76a4588a0cbdc884;Sampled=0;Lineage=1:37881594:0
+access-control-max-age: 86400
+```
+
+## 65. Reempaquetar Lambda en carpeta temporal (corrección CORS duplicado)
+
+_2026-11-13 12:07_ · código de salida 0
+
+```
+> python scripts/empaquetar_lambda.py
+C:\Users\aangu\OneDrive\Documentos\Escuela\Anahuac\Semestre7\Cómputo en la Nube\MiRitmo\entregable-1\build\miritmo-lambda.zip: 886 archivos, 1.5 MB
+```
+
+## 66. Lambda: actualizar código (las variables de entorno no cambian)
+
+_2026-11-13 12:07_ · código de salida 0
+
+```
+> aws lambda update-function-code --profile miritmo --region us-east-2 --function-name miritmo-api --zip-file fileb://build/miritmo-lambda.zip --query {Nombre:FunctionName,Estado:LastUpdateStatus,CodeSha256:CodeSha256}
+{
+    "Nombre": "miritmo-api",
+    "Estado": "InProgress",
+    "CodeSha256": "s05LVtBa1poOz3Lm3vLW6vw4cubyheUsv9ewn976bx8="
+}
+```
+
+## 67. CORS: respuesta real desde el origen de CloudFront (un solo Access-Control-Allow-Origin)
+
+_2026-11-13 12:07_ · código de salida 0
+
+```
+> curl.exe -s -D - -o NUL -X POST https://jaqdhe4yffqneg5kw2khwzz3pm0gztrw.lambda-url.us-east-2.on.aws/sesiones -H "Origin: https://dnfx295km7eni.cloudfront.net" -H "content-type: application/json" --data-binary {}
+HTTP/1.1 400 Bad Request
+Date: Fri, 13 Nov 2026 18:07:34 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 124
+Connection: keep-alive
+x-amzn-RequestId: 3b09ce6a-90eb-449e-af5a-69df09287402
+Access-Control-Allow-Origin: https://dnfx295km7eni.cloudfront.net
+Vary: Origin
+X-Amzn-Trace-Id: Root=1-6af751e6-223e05072eb0208c5eb3bce6;Parent=2f618a104007f5c4;Sampled=0;Lineage=1:37881594:0
+```

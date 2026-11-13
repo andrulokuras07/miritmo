@@ -22,6 +22,7 @@ PUERTO_WEB, PUERTO_API = 8080, 8787
 
 os.environ.setdefault("TOKEN_SECRET", "solo-para-desarrollo-local-no-usar-en-la-nube")
 os.environ.setdefault("ALLOWED_ORIGIN", f"http://localhost:{PUERTO_WEB}")
+os.environ.setdefault("CORS_EN_CODIGO", "1")  # en local no hay URL de función que agregue CORS
 sys.path.insert(0, str(RAIZ / "backend"))
 
 import lambda_function  # noqa: E402

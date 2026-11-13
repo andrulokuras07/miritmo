@@ -8,18 +8,26 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import zipfile
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BACKEND = os.path.join(RAIZ, "backend")
 BUILD = os.path.join(RAIZ, "build")
-PAQUETE = os.path.join(BUILD, "paquete")
 ZIP = os.path.join(BUILD, "miritmo-lambda.zip")
 
 
 def main():
-    shutil.rmtree(PAQUETE, ignore_errors=True)
-    os.makedirs(PAQUETE)
+    # Se arma en una carpeta temporal (fuera de OneDrive/Dropbox, que bloquean archivos al sincronizar).
+    paquete = tempfile.mkdtemp(prefix="miritmo-lambda-")
+    try:
+        armar(paquete)
+    finally:
+        shutil.rmtree(paquete, ignore_errors=True)
+
+
+def armar(PAQUETE):
+    os.makedirs(BUILD, exist_ok=True)
     subprocess.run([
         sys.executable, "-m", "pip", "install", "--quiet", "--disable-pip-version-check",
         "--platform", "manylinux2014_x86_64", "--python-version", "3.12", "--implementation", "cp",

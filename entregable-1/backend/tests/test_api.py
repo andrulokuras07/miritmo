@@ -236,10 +236,21 @@ class PruebasRegistros(Base):
 
 
 class PruebasHttp(Base):
-    def test_cors_para_cloudfront(self):
-        estado, _, encabezados = peticion("OPTIONS", "/cuentas")
+    def test_cors_para_cloudfront_en_codigo(self):
+        # Modo servidor local: el código agrega los encabezados CORS.
+        os.environ["CORS_EN_CODIGO"] = "1"
+        try:
+            estado, _, encabezados = peticion("OPTIONS", "/cuentas")
+        finally:
+            os.environ.pop("CORS_EN_CODIGO", None)
         self.assertEqual(estado, 204)
         self.assertEqual(encabezados["Access-Control-Allow-Origin"], ORIGEN)
+
+    def test_cors_en_aws_lo_pone_la_url_de_funcion(self):
+        # En AWS los encabezados CORS los agrega la URL de función; el código no debe duplicarlos.
+        estado, _, encabezados = peticion("POST", "/sesiones", {"correo": "x@mail.com", "contrasena": "12345678"})
+        self.assertEqual(estado, 401)
+        self.assertNotIn("Access-Control-Allow-Origin", encabezados)
 
     def test_origen_no_permitido(self):
         estado, _, encabezados = peticion("POST", "/cuentas", {}, origen="https://otro-sitio.com")

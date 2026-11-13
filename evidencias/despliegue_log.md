@@ -890,3 +890,57 @@ Access-Control-Allow-Origin: https://dnfx295km7eni.cloudfront.net
 Vary: Origin
 X-Amzn-Trace-Id: Root=1-6af751e6-223e05072eb0208c5eb3bce6;Parent=2f618a104007f5c4;Sampled=0;Lineage=1:37881594:0
 ```
+
+## 68. Cloudant: borrar cuentas de prueba creadas para la captura 14
+
+_2026-11-13 12:36_ · código de salida 0
+
+```
+> python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\con_cloudant.py python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\cloudant_util.py borrar-prefijo prueba
+borrado usuarios/pruebaa-20261113123606@miritmo.mx
+borrado usuarios/pruebab-20261113123606@miritmo.mx
+borrado registros/pruebaa-20261113123606@miritmo.mx:2026-11-13
+borrado registros/pruebab-20261113123606@miritmo.mx:2026-11-13
+```
+
+## 69. Cloudant: documentos finales (solo la cuenta demo)
+
+_2026-11-13 12:36_ · código de salida 0
+
+```
+> python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\con_cloudant.py python -I C:\Users\aangu\AppData\Local\Temp\claude\044fda7bcf4101bb\d3bb958f-7955-4d83-a366-f179683b71d9\scratchpad\cloudant_util.py listar
+usuarios: ['demo@miritmo.mx']
+registros: ['demo@miritmo.mx:2026-11-13']
+```
+
+## 70. CloudWatch Logs: revisión final de errores (después de la corrección CORS y de todas las pruebas)
+
+_2026-11-13 12:37_ · código de salida 0
+
+```
+> aws logs filter-log-events --profile miritmo --region us-east-2 --log-group-name /aws/lambda/miritmo-api --filter-pattern "?Traceback ?ERROR" --query length(events)
+0
+```
+
+## 71. Lambda: configuración final (sin valores de variables)
+
+_2026-11-13 12:37_ · código de salida 0
+
+```
+> aws lambda get-function-configuration --profile miritmo --region us-east-2 --function-name miritmo-api --query {Nombre:FunctionName,Runtime:Runtime,Arquitectura:Architectures[0],Timeout:Timeout,Memoria:MemorySize,Rol:Role,Estado:State,Variables:keys(Environment.Variables)}
+{
+    "Nombre": "miritmo-api",
+    "Runtime": "python3.12",
+    "Arquitectura": "x86_64",
+    "Timeout": 10,
+    "Memoria": 256,
+    "Rol": "arn:aws:iam::299335570017:role/miritmo-lambda-rol",
+    "Estado": "Active",
+    "Variables": [
+        "CLOUDANT_URL",
+        "CLOUDANT_APIKEY",
+        "TOKEN_SECRET",
+        "ALLOWED_ORIGIN"
+    ]
+}
+```

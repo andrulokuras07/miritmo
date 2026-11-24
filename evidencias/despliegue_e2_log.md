@@ -727,3 +727,53 @@ andrulokuras07
 origin	https://github.com/andrulokuras07/miritmo.git (fetch)
 origin	https://github.com/andrulokuras07/miritmo.git (push)
 ```
+
+## [29] Paso 6 · Descripción de la Lambda: 'Entregable 1' -> 'Entregable 2' (solo la descripción; variables de entorno sin tocar)
+
+2026-11-24 14:35 · código de salida 0
+
+```powershell
+aws lambda update-function-configuration --function-name miritmo-api --description "API de MiRitmo (Entregable 2)" --profile miritmo --query "{Descripcion:Description,Estado:LastUpdateStatus,Variables:keys(Environment.Variables)}" && aws lambda wait function-updated-v2 --function-name miritmo-api --profile miritmo
+```
+
+```text
+{
+    "Descripcion": "API de MiRitmo (Entregable 2)",
+    "Estado": "InProgress",
+    "Variables": [
+        "CLOUDANT_URL",
+        "CLOUDANT_APIKEY",
+        "TOKEN_SECRET",
+        "ALLOWED_ORIGIN"
+    ]
+}
+```
+
+## [30] Paso 6 · Borrar las 3 cuentas de prueba creadas por las capturas 13 y 14
+
+2026-11-24 16:07 · código de salida 0
+
+```powershell
+python con_cloudant.py borrar <pruebaE2-rend-20261124145819, pruebaA/B-20261124145858>
+```
+
+```text
+pruebae2-rend-20261124145819@miritmo.mx: usuario borrado=True, registros borrados=7
+  pruebaa-20261124145858@miritmo.mx: usuario borrado=True, registros borrados=1
+  pruebab-20261124145858@miritmo.mx: usuario borrado=True, registros borrados=1
+```
+
+## [31] Paso 6 · Cloudant al final: solo demo@ y examen@
+
+2026-11-24 16:07 · código de salida 0
+
+```powershell
+python con_cloudant.py listar
+```
+
+```text
+Base usuarios: 2 documentos
+   demo@miritmo.mx -> 1 registro(s)
+   examen@miritmo.mx -> 4 registro(s)
+Base registros: 5 documentos
+```

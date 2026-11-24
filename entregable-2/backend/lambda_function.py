@@ -12,6 +12,10 @@ Variables de entorno:
   ALLOWED_ORIGIN                 Dominio de CloudFront, ej. https://d123.cloudfront.net
   DB_USUARIOS, DB_REGISTROS      Opcionales (por defecto: usuarios, registros)
   TZ_OFFSET_HORAS                Opcional (por defecto -6, hora del centro de México)
+  CORS_EN_CODIGO                 Opcional. "1" hace que el código agregue los encabezados CORS
+                                 (lo usa servidor_local.py). En AWS no se define: los agrega la
+                                 configuración CORS de la URL de función; si los dos los agregan,
+                                 Access-Control-Allow-Origin sale duplicado y el navegador lo rechaza.
 """
 
 import base64
@@ -94,7 +98,7 @@ def usuario_autenticado(encabezados: dict) -> dict:
 
 def respuesta(estado: int, cuerpo, origen=None) -> dict:
     encabezados = {"Content-Type": "application/json; charset=utf-8"}
-    if origen:
+    if origen and os.environ.get("CORS_EN_CODIGO") == "1":
         encabezados.update({
             "Access-Control-Allow-Origin": origen,
             "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",

@@ -1,5 +1,6 @@
 """Validación de datos de entrada con mensajes claros en español."""
 
+import math
 import re
 from datetime import date, datetime, timedelta, timezone
 
@@ -107,6 +108,9 @@ def validar_rango(desde_txt, hasta_txt) -> tuple[date, date]:
 def _numero(valor):
     # bool es subclase de int; no lo aceptamos como número.
     if isinstance(valor, bool) or not isinstance(valor, (int, float)):
+        return None
+    # NaN e Infinity (válidos en el JSON de Python) no son números aceptables.
+    if not math.isfinite(valor):
         return None
     return valor
 

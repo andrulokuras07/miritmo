@@ -199,6 +199,16 @@ class PruebasRegistros(Base):
                 self.assertIn(next(iter(cambio)), cuerpo["campos"])
         self.assertEqual(self.almacen.registros, {})
 
+    def test_nan_e_infinity_responden_400(self):
+        token = self.token()
+        for campo in ("horas_trabajo", "tareas", "horas_sueno", "energia"):
+            for valor in (float("nan"), float("inf"), float("-inf")):
+                with self.subTest(campo=campo, valor=valor):
+                    estado, cuerpo, _ = peticion("PUT", f"/registros/{HOY}", {**DIA, campo: valor}, token=token)
+                    self.assertEqual(estado, 400)
+                    self.assertIn(campo, cuerpo["campos"])
+        self.assertEqual(self.almacen.registros, {})
+
     def test_sin_token_responde_401(self):
         estado, _, _ = peticion("PUT", f"/registros/{HOY}", DIA)
         self.assertEqual(estado, 401)
@@ -286,10 +296,21 @@ class PruebasConsulta(Base):
 
 
 class PruebasHttp(Base):
-    def test_cors_para_cloudfront(self):
-        estado, _, encabezados = peticion("OPTIONS", "/cuentas")
+    def test_cors_para_cloudfront_en_codigo(self):
+        # Modo servidor local: el código agrega los encabezados CORS.
+        os.environ["CORS_EN_CODIGO"] = "1"
+        try:
+            estado, _, encabezados = peticion("OPTIONS", "/cuentas")
+        finally:
+            os.environ.pop("CORS_EN_CODIGO", None)
         self.assertEqual(estado, 204)
         self.assertEqual(encabezados["Access-Control-Allow-Origin"], ORIGEN)
+
+    def test_cors_en_aws_lo_pone_la_url_de_funcion(self):
+        # En AWS los encabezados CORS los agrega la URL de función; el código no debe duplicarlos.
+        estado, _, encabezados = peticion("POST", "/sesiones", {"correo": "x@mail.com", "contrasena": "12345678"})
+        self.assertEqual(estado, 401)
+        self.assertNotIn("Access-Control-Allow-Origin", encabezados)
 
     def test_origen_no_permitido(self):
         estado, _, encabezados = peticion("POST", "/cuentas", {}, origen="https://otro-sitio.com")

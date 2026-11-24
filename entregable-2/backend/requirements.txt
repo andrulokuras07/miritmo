@@ -1,1 +1,11 @@
-ibmcloudant>=0.11,<1.0
+ibmcloudant==0.11.13
+ibm-cloud-sdk-core==3.28.1
+requests==2.34.2
+urllib3==2.8.0
+certifi==2026.10.23
+charset-normalizer==3.5.2
+idna==3.20
+PyJWT==2.15.1
+python-dateutil==3.0.0
+six==1.17.0
+tzdata==2026.6

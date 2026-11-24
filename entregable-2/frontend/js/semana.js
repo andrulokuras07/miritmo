@@ -75,7 +75,8 @@
     new Chart(document.getElementById("grafica"), {
       type: "bar",
       data: {
-        labels: fechas.map((f) => (f === hoy ? "Hoy" : MiRitmo.formatoFecha(f, { corta: true }))),
+        // Etiquetas en dos renglones ("Sáb" / "21") para que no se encimen a 360 px (RNF-04).
+        labels: fechas.map((f) => (f === hoy ? ["Hoy", ""] : MiRitmo.formatoFecha(f, { corta: true }).split(" "))),
         datasets: [{
           label: "Calificación",
           data: datos,

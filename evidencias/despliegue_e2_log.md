@@ -252,3 +252,260 @@ OK  Contraseña incorrecta muestra error | Correo o contraseña incorrectos.
 OK  Iniciar sesión con datos correctos | https://dnfx295km7eni.cloudfront.net/dia.html
 Errores de consola: ninguno · todo OK: True
 ```
+
+## [11] Paso 4 · Regresión con curl: 13 pruebas del Entregable 1 + 5 de GET /registros
+
+2026-11-24 13:59 · código de salida 0
+
+```powershell
+powershell -ExecutionPolicy Bypass -File evidencias\pruebas_curl_e2.ps1
+```
+
+```text
+MiRitmo - pruebas con curl contra https://jaqdhe4yffqneg5kw2khwzz3pm0gztrw.lambda-url.us-east-2.on.aws
+Hoy (CDMX): 2026-11-24
+
+[OK ] RF-01   Crear cuenta nueva                                         HTTP 201  token recibido (oculto)
+[OK ] RF-01   Crear cuenta con el mismo correo                           HTTP 409  Ya existe una cuenta con ese correo.
+[OK ] RF-01   Crear cuenta con contraseña de 7 caracteres                HTTP 400  Revisa los datos marcados.
+[OK ] RF-02   Iniciar sesión con datos correctos                         HTTP 200  token recibido (oculto)
+[OK ] RF-02   Iniciar sesión con contraseña incorrecta                   HTTP 401  Correo o contraseña incorrectos.
+[OK ] RF-03   Guardar registro de hoy (2026-11-24)                       HTTP 200  calificación 71
+[OK ] RF-03   Guardar registro con fecha futura (2026-11-25)             HTTP 400  No puedes registrar días futuros.
+[OK ] RF-03   Guardar registro de hace 7 días (2026-11-17)               HTTP 400  Solo puedes registrar hoy o los 6 días anteriores.
+[OK ] RF-04   6 h, 4 tareas, 7.5 h sueño, energía 4 (esperado 84)        HTTP 200  calificación 84
+[OK ] RNF-02  PUT sin token                                              HTTP 401  Tu sesión no es válida o expiró. Inicia sesión de nuevo.
+[OK ] RNF-02  PUT con token alterado                                     HTTP 401  Tu sesión no es válida o expiró. Inicia sesión de nuevo.
+[OK ] RNF-02  Usuario B manda usuario=A en el cuerpo (se guarda como B)  HTTP 200  calificación 10
+[OK ] RNF-02  Usuario B intenta la ruta /registros/<correo A>:<fecha>    HTTP 400  Fecha inválida.
+[OK ] RNF-02  GET /registros sin token                                   HTTP 401  Tu sesión no es válida o expiró. Inicia sesión de nuevo.
+[OK ] RNF-02  GET /registros con token alterado                          HTTP 401  Tu sesión no es válida o expiró. Inicia sesión de nuevo.
+[OK ] RF-06   GET rango válido (7 días) con token de A: solo los de A    HTTP 200  1 registro(s): 2026-11-24=84
+[OK ] RF-06   GET rango válido con token de B: solo los de B             HTTP 200  1 registro(s): 2026-11-24=10
+[OK ] RF-06   GET rango inválido (desde posterior a hasta)               HTTP 400  El rango de fechas es inválido.
+
+Resultado: 18 de 18 pruebas como se esperaba.
+Cuentas de prueba: pruebaA-20261124135944@miritmo.mx y pruebaB-20261124135944@miritmo.mx
+```
+
+## [12] Paso 4 · RNF-03: 20 peticiones a la API (GET y PUT alternados), se descarta la primera
+
+2026-11-24 14:00 · código de salida 0
+
+```powershell
+python evidencias/rendimiento_api.py
+```
+
+```text
+MiRitmo · RNF-03 · 20 peticiones a https://jaqdhe4yffqneg5kw2khwzz3pm0gztrw.lambda-url.us-east-2.on.aws
+Cuenta temporal: pruebaE2-rend-20261124135957@miritmo.mx  (hoy CDMX: 2026-11-24)
+
+  #  Método Ruta                                         HTTP    Tiempo
+  1  GET    /registros?desde=2026-11-18&hasta=2026-11-24  200   0.324 s  (descartada: primera petición)
+  2  PUT    /registros/2026-11-23                         200   0.392 s
+  3  GET    /registros?desde=2026-11-18&hasta=2026-11-24  200   0.300 s
+  4  PUT    /registros/2026-11-22                         200   0.343 s
+  5  GET    /registros?desde=2026-11-18&hasta=2026-11-24  200   0.308 s
+  6  PUT    /registros/2026-11-21                         200   0.359 s
+  7  GET    /registros?desde=2026-11-18&hasta=2026-11-24  200   0.299 s
+  8  PUT    /registros/2026-11-20                         200   0.338 s
+  9  GET    /registros?desde=2026-11-18&hasta=2026-11-24  200   0.307 s
+ 10  PUT    /registros/2026-11-19                         200   0.358 s
+ 11  GET    /registros?desde=2026-11-18&hasta=2026-11-24  200   0.339 s
+ 12  PUT    /registros/2026-11-18                         200   0.341 s
+ 13  GET    /registros?desde=2026-11-18&hasta=2026-11-24  200   0.296 s
+ 14  PUT    /registros/2026-11-24                         200   0.333 s
+ 15  GET    /registros?desde=2026-11-18&hasta=2026-11-24  200   0.328 s
+ 16  PUT    /registros/2026-11-23                         200   0.343 s
+ 17  GET    /registros?desde=2026-11-18&hasta=2026-11-24  200   0.285 s
+ 18  PUT    /registros/2026-11-22                         200   0.374 s
+ 19  GET    /registros?desde=2026-11-18&hasta=2026-11-24  200   0.313 s
+ 20  PUT    /registros/2026-11-21                         200   0.352 s
+
+Contadas: 19 · menos de 3 s con HTTP 200: 19 de 19 (100 %; criterio: 90 % o más)
+Mínimo 0.285 s · mediana 0.338 s · máximo 0.392 s · promedio 0.332 s
+RNF-03: CUMPLE
+CUENTA_TEMPORAL=pruebaE2-rend-20261124135957@miritmo.mx
+```
+
+## [13] Paso 4 · CORS de GET /registros: preflight y petición desde CloudFront y desde otro origen
+
+2026-11-24 14:00 · código de salida 0
+
+```powershell
+curl.exe -X OPTIONS <api>/registros?... -H 'Origin: https://dnfx295km7eni.cloudfront.net' -H 'Access-Control-Request-Method: GET'  (y GET desde CloudFront y desde otro origen)
+```
+
+```text
+--- Preflight de GET /registros desde CloudFront:
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: https://dnfx295km7eni.cloudfront.net
+Access-Control-Allow-Headers: content-type,authorization
+Access-Control-Allow-Methods: GET,POST,PUT
+Access-Control-Max-Age: 300
+--- GET real desde CloudFront (sin token): ¿un solo Access-Control-Allow-Origin?
+HTTP/1.1 401 Unauthorized
+Access-Control-Allow-Origin: https://dnfx295km7eni.cloudfront.net
+--- GET desde otro origen:
+HTTP/1.1 403 Forbidden
+{"error": "Origen no permitido."}
+```
+
+## [14] Paso 4 · RNF-06: flujo completo en chrome (cuenta, validaciones, registro, editar, Mi semana, 360 px, cerrar e iniciar sesión)
+
+2026-11-24 14:01 · código de salida 0
+
+```powershell
+python evidencias/pruebas_navegador.py --url https://dnfx295km7eni.cloudfront.net --canal chrome --correo pruebaE2-chrome-<marca>@miritmo.mx --crear --validaciones --movil --dias "0:6,4,7.5,4;2:7,5,8,5;4:3,1,6,2" --editar "2:horas_sueno=5"
+```
+
+```text
+Navegador: chrome 158.0.8127.38 · URL https://dnfx295km7eni.cloudfront.net · hoy (CDMX) 2026-11-24
+OK  Sin sesión, dia.html regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  Sin sesión, semana.html regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  Validación: contraseña de 7 caracteres | Revisa los datos marcados. / La contraseña debe tener al menos 8 caracteres.
+OK  Crear cuenta y entrar a Mi día | https://dnfx295km7eni.cloudfront.net/dia.html
+OK  Fechas: hoy y los 6 días anteriores | 2026-11-24, 2026-11-23, 2026-11-22, 2026-11-21, 2026-11-20, 2026-11-19, 2026-11-18
+OK  Validación: 17 h de estudio (máximo 16) | HTTP 400: Revisa los datos marcados. / Debe estar entre 0 y 16 horas.
+OK  Validación: formulario vacío | horas_trabajo: Escribe las horas de estudio o trabajo.; tareas: Escribe las tareas completadas.; horas_sueno: Escribe las horas de sueño.; energia: Escribe tu nivel de energía.
+OK  Registrar 2026-11-20 {'horas_trabajo': 3.0, 'tareas': 1, 'horas_sueno': 6.0, 'energia': 2} | HTTP 200, muestra 39, cálculo a mano 39, 0.31 s
+OK  Registrar 2026-11-22 {'horas_trabajo': 7.0, 'tareas': 5, 'horas_sueno': 8.0, 'energia': 5} | HTTP 200, muestra 97, cálculo a mano 97, 0.29 s
+OK  Registrar 2026-11-24 {'horas_trabajo': 6.0, 'tareas': 4, 'horas_sueno': 7.5, 'energia': 4} | HTTP 200, muestra 84, cálculo a mano 84, 0.22 s
+OK  RF-05: al elegir 2026-11-22 el formulario muestra sus datos | aviso 'Ya registraste este día. Puedes cambiar los datos y guardar de nuevo.', datos {'horas_trabajo': '7', 'tareas': '5', 'horas_sueno': '8', 'energia': '5'}, calificación mostrada 97, botón 'Guardar cambios'
+OK  RF-05: editar 2026-11-22 horas_sueno=5 recalcula | antes 97, después 77, cálculo a mano 77, 0.21 s
+OK  RF-06: gráfica de 7 días con 'Sin registro' en los vacíos | 3 con barra, 4 'Sin registro', 18162 pixeles dibujados
+OK  RF-07: promedio y mejor día | app: promedio 66.7, mejor 84 (Hoy); a mano: 39 + 77 + 84 = 200 / 3 = 66.67, máximo 84
+OK  La semana coincide con lo guardado | guardado en esta corrida: {'2026-11-20': 39, '2026-11-22': 77, '2026-11-24': 84}
+OK  RNF-04: semana.html a 360 px | {"scrollWidth": 360, "clientWidth": 360, "fuera": []}
+OK  RNF-04: dia.html a 360 px | {"scrollWidth": 360, "clientWidth": 360, "fuera": []}
+OK  Cerrar sesión regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  RNF-04: index.html a 360 px | {"scrollWidth": 360, "clientWidth": 360, "fuera": []}
+OK  Contraseña incorrecta muestra error | Correo o contraseña incorrectos.
+OK  Iniciar sesión con datos correctos | https://dnfx295km7eni.cloudfront.net/dia.html
+Errores de consola: ninguno · todo OK: True
+```
+
+## [15] Paso 4 · RNF-06: flujo completo en msedge (cuenta, validaciones, registro, editar, Mi semana, 360 px, cerrar e iniciar sesión)
+
+2026-11-24 14:01 · código de salida 0
+
+```powershell
+python evidencias/pruebas_navegador.py --url https://dnfx295km7eni.cloudfront.net --canal msedge --correo pruebaE2-msedge-<marca>@miritmo.mx --crear --validaciones --movil --dias "0:6,4,7.5,4;2:7,5,8,5;4:3,1,6,2" --editar "2:horas_sueno=5"
+```
+
+```text
+Navegador: msedge 158.0.4370.33 · URL https://dnfx295km7eni.cloudfront.net · hoy (CDMX) 2026-11-24
+OK  Sin sesión, dia.html regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  Sin sesión, semana.html regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  Validación: contraseña de 7 caracteres | Revisa los datos marcados. / La contraseña debe tener al menos 8 caracteres.
+OK  Crear cuenta y entrar a Mi día | https://dnfx295km7eni.cloudfront.net/dia.html
+OK  Fechas: hoy y los 6 días anteriores | 2026-11-24, 2026-11-23, 2026-11-22, 2026-11-21, 2026-11-20, 2026-11-19, 2026-11-18
+OK  Validación: 17 h de estudio (máximo 16) | HTTP 400: Revisa los datos marcados. / Debe estar entre 0 y 16 horas.
+OK  Validación: formulario vacío | horas_trabajo: Escribe las horas de estudio o trabajo.; tareas: Escribe las tareas completadas.; horas_sueno: Escribe las horas de sueño.; energia: Escribe tu nivel de energía.
+OK  Registrar 2026-11-20 {'horas_trabajo': 3.0, 'tareas': 1, 'horas_sueno': 6.0, 'energia': 2} | HTTP 200, muestra 39, cálculo a mano 39, 0.33 s
+OK  Registrar 2026-11-22 {'horas_trabajo': 7.0, 'tareas': 5, 'horas_sueno': 8.0, 'energia': 5} | HTTP 200, muestra 97, cálculo a mano 97, 0.32 s
+OK  Registrar 2026-11-24 {'horas_trabajo': 6.0, 'tareas': 4, 'horas_sueno': 7.5, 'energia': 4} | HTTP 200, muestra 84, cálculo a mano 84, 0.23 s
+OK  RF-05: al elegir 2026-11-22 el formulario muestra sus datos | aviso 'Ya registraste este día. Puedes cambiar los datos y guardar de nuevo.', datos {'horas_trabajo': '7', 'tareas': '5', 'horas_sueno': '8', 'energia': '5'}, calificación mostrada 97, botón 'Guardar cambios'
+OK  RF-05: editar 2026-11-22 horas_sueno=5 recalcula | antes 97, después 77, cálculo a mano 77, 0.23 s
+OK  RF-06: gráfica de 7 días con 'Sin registro' en los vacíos | 3 con barra, 4 'Sin registro', 18162 pixeles dibujados
+OK  RF-07: promedio y mejor día | app: promedio 66.7, mejor 84 (Hoy); a mano: 39 + 77 + 84 = 200 / 3 = 66.67, máximo 84
+OK  La semana coincide con lo guardado | guardado en esta corrida: {'2026-11-20': 39, '2026-11-22': 77, '2026-11-24': 84}
+OK  RNF-04: semana.html a 360 px | {"scrollWidth": 360, "clientWidth": 360, "fuera": []}
+OK  RNF-04: dia.html a 360 px | {"scrollWidth": 360, "clientWidth": 360, "fuera": []}
+OK  Cerrar sesión regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  RNF-04: index.html a 360 px | {"scrollWidth": 360, "clientWidth": 360, "fuera": []}
+OK  Contraseña incorrecta muestra error | Correo o contraseña incorrectos.
+OK  Iniciar sesión con datos correctos | https://dnfx295km7eni.cloudfront.net/dia.html
+Errores de consola: ninguno · todo OK: True
+```
+
+## [16] Paso 4 · CloudWatch: errores desde el despliegue del Entregable 2 (19:50 UTC)
+
+2026-11-24 14:01 · código de salida 0
+
+```powershell
+aws logs filter-log-events --log-group-name /aws/lambda/miritmo-api --start-time <2026-11-24 19:50 UTC> --filter-pattern '?Traceback ?ERROR ?"Task timed out" ?Exception' --query 'length(events)'
+```
+
+```text
+0
+```
+
+## [17] Paso 4 · CloudWatch: ejecuciones (REPORT) desde el despliegue: cantidad, duración y memoria
+
+2026-11-24 14:02 · código de salida 0
+
+```powershell
+aws logs filter-log-events --log-group-name /aws/lambda/miritmo-api --start-time <19:50 UTC> --filter-pattern REPORT  (resumen con Python)
+```
+
+```text
+Ejecuciones: 137
+Duracion ms: min 1.49 max 6072.5 promedio 210.8
+Memoria max usada MB: 99 de 256
+Arranques en frio: 1 Init ms: [218.93]
+```
+
+## [18] Paso 4 · Resumen de CloudWatch: la ejecución de 6072 ms es la primera tras el despliegue (arranque en frío, Init Duration 218.93 ms, POST /cuentas); el resto <= 775 ms
+
+2026-11-24 14:02 · código de salida 0
+
+```powershell
+aws logs filter-log-events --log-group-name /aws/lambda/miritmo-api --start-time <19:50 UTC> --filter-pattern REPORT  (10 duraciones más altas)
+```
+
+```text
+Ejecuciones 137 | 10 mas lentas (ms): [742.32, 742.91, 743.58, 746.26, 749.61, 753.51, 753.57, 758.82, 774.6, 6072.5]
+```
+
+## [19] Paso 4 · Pruebas unitarias del Entregable 2
+
+2026-11-24 14:02 · código de salida 0
+
+```powershell
+cd entregable-2\backend; python -m unittest discover -s tests -v
+```
+
+```text
+test_ejemplo_del_documento_es_84 (test_api.PruebasCalificacion.test_ejemplo_del_documento_es_84) ... ok
+test_maximo_100_y_topes (test_api.PruebasCalificacion.test_maximo_100_y_topes) ... ok
+test_minimo (test_api.PruebasCalificacion.test_minimo) ... ok
+test_niveles_de_sueno (test_api.PruebasCalificacion.test_niveles_de_sueno) ... ok
+test_redondeo_al_entero_mas_cercano (test_api.PruebasCalificacion.test_redondeo_al_entero_mas_cercano) ... ok
+test_correo_parecido_no_se_mezcla (test_api.PruebasConsulta.test_correo_parecido_no_se_mezcla) ... ok
+test_devuelve_los_dias_registrados_en_orden (test_api.PruebasConsulta.test_devuelve_los_dias_registrados_en_orden) ... ok
+test_editar_dia_actualiza_y_recalcula (test_api.PruebasConsulta.test_editar_dia_actualiza_y_recalcula) ... ok
+test_no_ve_registros_de_otro_usuario (test_api.PruebasConsulta.test_no_ve_registros_de_otro_usuario) ... ok
+test_rango_invalido (test_api.PruebasConsulta.test_rango_invalido) ... ok
+test_sin_token_responde_401 (test_api.PruebasConsulta.test_sin_token_responde_401) ... ok
+test_contrasena_minimo_8 (test_api.PruebasCuentas.test_contrasena_minimo_8) ... ok
+test_contrasena_no_se_guarda_en_texto_plano (test_api.PruebasCuentas.test_contrasena_no_se_guarda_en_texto_plano) ... ok
+test_crear_cuenta_devuelve_token (test_api.PruebasCuentas.test_crear_cuenta_devuelve_token) ... ok
+test_datos_invalidos (test_api.PruebasCuentas.test_datos_invalidos) ... ok
+test_mismo_correo_no_se_registra_dos_veces (test_api.PruebasCuentas.test_mismo_correo_no_se_registra_dos_veces) ... ok
+test_cors_en_aws_lo_pone_la_url_de_funcion (test_api.PruebasHttp.test_cors_en_aws_lo_pone_la_url_de_funcion) ... ok
+test_cors_para_cloudfront_en_codigo (test_api.PruebasHttp.test_cors_para_cloudfront_en_codigo) ... ok
+test_json_invalido (test_api.PruebasHttp.test_json_invalido) ... ok
+test_origen_no_permitido (test_api.PruebasHttp.test_origen_no_permitido) ... ok
+test_ruta_inexistente (test_api.PruebasHttp.test_ruta_inexistente) ... ok
+test_cada_usuario_escribe_solo_sus_registros (test_api.PruebasRegistros.test_cada_usuario_escribe_solo_sus_registros) ... ok
+test_fecha_con_formato_invalido (test_api.PruebasRegistros.test_fecha_con_formato_invalido) ... ok
+test_fecha_futura_rechazada (test_api.PruebasRegistros.test_fecha_futura_rechazada) ... ok
+test_guardar_dia_devuelve_calificacion (test_api.PruebasRegistros.test_guardar_dia_devuelve_calificacion) ... ok
+test_mas_de_seis_dias_atras_rechazada (test_api.PruebasRegistros.test_mas_de_seis_dias_atras_rechazada) ... ok
+test_nan_e_infinity_responden_400 (test_api.PruebasRegistros.test_nan_e_infinity_responden_400) ... ok
+test_seis_dias_anteriores_permitidos (test_api.PruebasRegistros.test_seis_dias_anteriores_permitidos) ... ok
+test_sin_token_responde_401 (test_api.PruebasRegistros.test_sin_token_responde_401) ... ok
+test_token_expirado_responde_401 (test_api.PruebasRegistros.test_token_expirado_responde_401) ... ok
+test_token_invalido_responde_401 (test_api.PruebasRegistros.test_token_invalido_responde_401) ... ok
+test_un_solo_registro_por_usuario_y_fecha (test_api.PruebasRegistros.test_un_solo_registro_por_usuario_y_fecha) ... ok
+test_valores_fuera_de_rango (test_api.PruebasRegistros.test_valores_fuera_de_rango) ... ok
+test_contrasena_incorrecta (test_api.PruebasSesiones.test_contrasena_incorrecta) ... ok
+test_correo_inexistente (test_api.PruebasSesiones.test_correo_inexistente) ... ok
+test_inicio_correcto (test_api.PruebasSesiones.test_inicio_correcto) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 2.546s
+
+OK
+```

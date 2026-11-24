@@ -509,3 +509,94 @@ Ran 36 tests in 2.546s
 
 OK
 ```
+
+## [20] Paso 4 · RNF-05: plan de la instancia de Cloudant
+
+2026-11-24 14:23 · código de salida 0
+
+```powershell
+ibmcloud resource service-instance miritmo-cloudant
+```
+
+```text
+{'name': 'miritmo-cloudant', 'region_id': 'us-south', 'state': 'active', 'type': 'service_instance'} plan: cloudant-lite
+Name:                  miritmo-cloudant
+Location:              us-south
+Service Name:          cloudantnosqldb
+Service Plan Name:     lite
+Resource Group Name:   Default
+State:                 active
+```
+
+## [21] Paso 4 · Cloudant antes de limpiar: usuarios y número de registros de cada uno
+
+2026-11-24 14:23 · código de salida 0
+
+```powershell
+python con_cloudant.py listar  (credencial de servicio solo en memoria)
+```
+
+```text
+Base usuarios: 10 documentos
+   demo@miritmo.mx -> 1 registro(s)
+   examen@miritmo.mx -> 4 registro(s)
+   pruebaa-20261124135906@miritmo.mx -> 1 registro(s)
+   pruebaa-20261124135944@miritmo.mx -> 1 registro(s)
+   pruebab-20261124135906@miritmo.mx -> 1 registro(s)
+   pruebab-20261124135944@miritmo.mx -> 1 registro(s)
+   pruebae2-chrome-20261124140027@miritmo.mx -> 3 registro(s)
+   pruebae2-msedge-20261124140100@miritmo.mx -> 3 registro(s)
+   pruebae2-reg-20261124135648@miritmo.mx -> 1 registro(s)
+   pruebae2-rend-20261124135957@miritmo.mx -> 7 registro(s)
+Base registros: 23 documentos
+```
+
+## [22] Paso 4 · Cloudant: documentos de examen@miritmo.mx (sin contraseña en texto plano; el 23 editado)
+
+2026-11-24 14:23 · código de salida 0
+
+```powershell
+python con_cloudant.py ver examen@miritmo.mx
+```
+
+```text
+usuarios/examen@miritmo.mx: campos ['_id', '_rev', 'correo', 'creado', 'hash', 'nombre', 'sal']; ¿tiene 'contrasena'? False; hash 64 caracteres, sal 32 caracteres
+  registros/examen@miritmo.mx:2026-11-19: trabajo 4.0, tareas 2, sueño 5.0, energía 2 -> calificación 38; actualizado 2026-11-24T19:57:52+00:00; _rev 1-..
+  registros/examen@miritmo.mx:2026-11-21: trabajo 8.0, tareas 5, sueño 6.5, energía 5 -> calificación 90; actualizado 2026-11-24T19:57:53+00:00; _rev 1-..
+  registros/examen@miritmo.mx:2026-11-23: trabajo 5.0, tareas 5, sueño 8.0, energía 3 -> calificación 81; actualizado 2026-11-24T19:57:59+00:00; _rev 2-..
+  registros/examen@miritmo.mx:2026-11-24: trabajo 6.0, tareas 4, sueño 7.5, energía 4 -> calificación 84; actualizado 2026-11-24T19:57:55+00:00; _rev 1-..
+```
+
+## [23] Paso 4 · Borrar las 8 cuentas de prueba creadas hoy (usuario y sus registros); se conservan examen@ y demo@
+
+2026-11-24 14:24 · código de salida 0
+
+```powershell
+python con_cloudant.py borrar <lista de 8 cuentas prueba*-20261124*>
+```
+
+```text
+pruebaa-20261124135906@miritmo.mx: usuario borrado=True, registros borrados=1
+  pruebaa-20261124135944@miritmo.mx: usuario borrado=True, registros borrados=1
+  pruebab-20261124135906@miritmo.mx: usuario borrado=True, registros borrados=1
+  pruebab-20261124135944@miritmo.mx: usuario borrado=True, registros borrados=1
+  pruebae2-chrome-20261124140027@miritmo.mx: usuario borrado=True, registros borrados=3
+  pruebae2-msedge-20261124140100@miritmo.mx: usuario borrado=True, registros borrados=3
+  pruebae2-reg-20261124135648@miritmo.mx: usuario borrado=True, registros borrados=1
+  pruebae2-rend-20261124135957@miritmo.mx: usuario borrado=True, registros borrados=7
+```
+
+## [24] Paso 4 · Cloudant después de limpiar
+
+2026-11-24 14:24 · código de salida 0
+
+```powershell
+python con_cloudant.py listar
+```
+
+```text
+Base usuarios: 2 documentos
+   demo@miritmo.mx -> 1 registro(s)
+   examen@miritmo.mx -> 4 registro(s)
+Base registros: 5 documentos
+```

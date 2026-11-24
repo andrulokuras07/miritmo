@@ -689,3 +689,41 @@ OK  Contraseña incorrecta muestra error | Correo o contraseña incorrectos.
 OK  Iniciar sesión con datos correctos | https://dnfx295km7eni.cloudfront.net/dia.html
 Errores de consola: ninguno · todo OK: True
 ```
+
+## [27] Paso 5 · Revisión de secretos en TODO el historial (16 commits, todas las versiones de todos los archivos)
+
+2026-11-24 14:34 · código de salida 0
+
+```powershell
+git grep -I -E '<patrón>' $(git rev-list --all)   (15 patrones) ; git log --all --name-only
+```
+
+```text
+Archivos prohibidos en el historial (build/, .env, CLAUDE.md, zip, pem, key, entorno.json): ninguno 
+Cloudant host (appdomain.cloud): 0 
+URLs con credenciales: 0 
+Llaves AWS (AKIA/ASIA, SecretAccessKey): 0 
+Llaves privadas: 0 
+Tokens de GitHub (gh*_): 0 
+Tokens JWT/MiRitmo (eyJ...): 0 
+apikey con valor: 0 
+TOKEN_SECRET con valor: 0 
+Contrasenas: solo valores de prueba en tests y scripts (abc1234, incorrecta123, contrasena123, otra-clave, 12345678, 1234567) 
+Cadenas de alta entropia: solo hashes CodeSha256, ID de la URL de Lambda, trace IDs de X-Ray 
+Binarios en el historial: ninguno
+```
+
+## [28] Paso 5 · GitHub: cuenta de gh y repositorio público
+
+2026-11-24 14:34 · código de salida 0
+
+```powershell
+gh api user --jq .login ; gh repo create andrulokuras07/miritmo --public --source . --remote origin ; git config --local credential.https://github.com.username andrulokuras07 ; git push -u origin master ; gh repo edit --default-branch master
+```
+
+```text
+andrulokuras07
+{"dueno":"andrulokuras07","rama":"master","url":"https://github.com/andrulokuras07/miritmo","visibilidad":"public"}
+origin	https://github.com/andrulokuras07/miritmo.git (fetch)
+origin	https://github.com/andrulokuras07/miritmo.git (push)
+```

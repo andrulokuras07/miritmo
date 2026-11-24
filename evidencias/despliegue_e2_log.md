@@ -217,3 +217,38 @@ OK  Contraseña incorrecta muestra error | Correo o contraseña incorrectos.
 OK  Iniciar sesión con datos correctos | https://dnfx295km7eni.cloudfront.net/dia.html
 Errores de consola: ninguno · todo OK: True
 ```
+
+## [10] Paso 3: cuenta examen@miritmo.mx creada desde la app; 4 días registrados (19, 21, 23 y 24 de nov; vacíos 18, 20 y 22), el 23 editado (tareas 3 -> 5), validaciones y 360 px
+
+2026-11-24 13:58 · código de salida 0
+
+```powershell
+$env:MIRITMO_CLAVE = <contraseña aleatoria, solo en memoria>; python evidencias/pruebas_navegador.py --url https://dnfx295km7eni.cloudfront.net --canal chrome --correo examen@miritmo.mx --crear --validaciones --movil --dias "0:6,4,7.5,4;1:5,3,8,3;3:8,5,6.5,5;5:4,2,5,2" --editar "1:tareas=5"
+```
+
+```text
+Navegador: chrome 158.0.8127.38 · URL https://dnfx295km7eni.cloudfront.net · hoy (CDMX) 2026-11-24
+OK  Sin sesión, dia.html regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  Sin sesión, semana.html regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  Validación: contraseña de 7 caracteres | Revisa los datos marcados. / La contraseña debe tener al menos 8 caracteres.
+OK  Crear cuenta y entrar a Mi día | https://dnfx295km7eni.cloudfront.net/dia.html
+OK  Fechas: hoy y los 6 días anteriores | 2026-11-24, 2026-11-23, 2026-11-22, 2026-11-21, 2026-11-20, 2026-11-19, 2026-11-18
+OK  Validación: 17 h de estudio (máximo 16) | HTTP 400: Revisa los datos marcados. / Debe estar entre 0 y 16 horas.
+OK  Validación: formulario vacío | horas_trabajo: Escribe las horas de estudio o trabajo.; tareas: Escribe las tareas completadas.; horas_sueno: Escribe las horas de sueño.; energia: Escribe tu nivel de energía.
+OK  Registrar 2026-11-19 {'horas_trabajo': 4.0, 'tareas': 2, 'horas_sueno': 5.0, 'energia': 2} | HTTP 200, muestra 38, cálculo a mano 38, 0.3 s
+OK  Registrar 2026-11-21 {'horas_trabajo': 8.0, 'tareas': 5, 'horas_sueno': 6.5, 'energia': 5} | HTTP 200, muestra 90, cálculo a mano 90, 0.31 s
+OK  Registrar 2026-11-23 {'horas_trabajo': 5.0, 'tareas': 3, 'horas_sueno': 8.0, 'energia': 3} | HTTP 200, muestra 71, cálculo a mano 71, 0.29 s
+OK  Registrar 2026-11-24 {'horas_trabajo': 6.0, 'tareas': 4, 'horas_sueno': 7.5, 'energia': 4} | HTTP 200, muestra 84, cálculo a mano 84, 0.22 s
+OK  RF-05: al elegir 2026-11-23 el formulario muestra sus datos | aviso 'Ya registraste este día. Puedes cambiar los datos y guardar de nuevo.', datos {'horas_trabajo': '5', 'tareas': '3', 'horas_sueno': '8', 'energia': '3'}, calificación mostrada 71, botón 'Guardar cambios'
+OK  RF-05: editar 2026-11-23 tareas=5 recalcula | antes 71, después 81, cálculo a mano 81, 0.22 s
+OK  RF-06: gráfica de 7 días con 'Sin registro' en los vacíos | 4 con barra, 3 'Sin registro', 24038 pixeles dibujados
+OK  RF-07: promedio y mejor día | app: promedio 73.3, mejor 90 (Sábado, 21 de noviembre); a mano: 38 + 90 + 81 + 84 = 293 / 4 = 73.25, máximo 90
+OK  La semana coincide con lo guardado | guardado en esta corrida: {'2026-11-19': 38, '2026-11-21': 90, '2026-11-23': 81, '2026-11-24': 84}
+OK  RNF-04: semana.html a 360 px | {"scrollWidth": 360, "clientWidth": 360, "fuera": []}
+OK  RNF-04: dia.html a 360 px | {"scrollWidth": 360, "clientWidth": 360, "fuera": []}
+OK  Cerrar sesión regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  RNF-04: index.html a 360 px | {"scrollWidth": 360, "clientWidth": 360, "fuera": []}
+OK  Contraseña incorrecta muestra error | Correo o contraseña incorrectos.
+OK  Iniciar sesión con datos correctos | https://dnfx295km7eni.cloudfront.net/dia.html
+Errores de consola: ninguno · todo OK: True
+```

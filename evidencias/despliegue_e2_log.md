@@ -600,3 +600,92 @@ Base usuarios: 2 documentos
    examen@miritmo.mx -> 4 registro(s)
 Base registros: 5 documentos
 ```
+
+## [25] Paso 5 · RNF-07: README validado al pie de la letra desde un clon limpio (git clone en carpeta temporal, commit 1b5083e), sección 6 'Publicar una nueva versión' contra los recursos existentes
+
+2026-11-24 14:31 · código de salida 0
+
+```powershell
+git clone <repo> %TEMP%\...\validacion-readme\miritmo; cd miritmo; (bloques de la sección 6 del README, copiados tal cual)
+```
+
+```text
+﻿===== Bloque 1 de la sección 6 =====
+PS> cd entregable-2
+PS> $Perfil = "miritmo"
+PS> $Funcion = "miritmo-api"
+PS> $Bucket = "miritmo-frontend-5e016053"
+PS> $Distribucion = "E1C3936GEOWFBQ"
+===== Bloque 2 de la sección 6 =====
+PS> python -m unittest discover -s backend\tests
+....................................
+ 
+----------------------------------------------------------------------
+Ran 36 tests in 2.375s
+
+OK
+===== Bloque 3 de la sección 6 =====
+PS> python scripts\empaquetar_lambda.py
+C:\Users\aangu\AppData\Local\Temp\claude\0d04e3b7ac9416b4\58d5292c-d0e0-412d-9cdd-a80dc9e63238\scratchpad\validacion-readme\miritmo\entregable-2\build\miritmo-lambda.zip: 886 archivos, 1.5 MB
+===== Bloque 4 de la sección 6 =====
+PS> aws lambda update-function-code --function-name $Funcion --zip-file fileb://build/miritmo-lambda.zip --profile $Perfil --query "{Estado:LastUpdateStatus,Sha256:CodeSha256}"
+{
+    "Estado": "InProgress",
+    "Sha256": "OhOZqWJFfdD2nAtarRbmnuiGpco4i5LE4fshNhLujZM="
+}
+PS> aws lambda wait function-updated-v2 --function-name $Funcion --profile $Perfil
+===== Bloque 5 de la sección 6 =====
+PS> $Api = aws lambda get-function-url-config --function-name $Funcion --profile $Perfil --query FunctionUrl --output text
+PS> python scripts\publicar_frontend.py --bucket $Bucket --distribucion $Distribucion --api $Api --perfil $Perfil --esperar
+Subiendo a s3://miritmo-frontend-5e016053 ...
+  $ aws s3 cp C:\Users\aangu\AppData\Local\Temp\miritmo-web-eltl3dvv\frontend\dia.html s3://miritmo-frontend-5e016053/dia.html --content-type text/html; charset=utf-8 --cache-control no-cache --only-show-errors --profile miritmo
+  $ aws s3 cp C:\Users\aangu\AppData\Local\Temp\miritmo-web-eltl3dvv\frontend\index.html s3://miritmo-frontend-5e016053/index.html --content-type text/html; charset=utf-8 --cache-control no-cache --only-show-errors --profile miritmo
+  $ aws s3 cp C:\Users\aangu\AppData\Local\Temp\miritmo-web-eltl3dvv\frontend\semana.html s3://miritmo-frontend-5e016053/semana.html --content-type text/html; charset=utf-8 --cache-control no-cache --only-show-errors --profile miritmo
+  $ aws s3 cp C:\Users\aangu\AppData\Local\Temp\miritmo-web-eltl3dvv\frontend\css\estilos.css s3://miritmo-frontend-5e016053/css/estilos.css --content-type text/css; charset=utf-8 --cache-control no-cache --only-show-errors --profile miritmo
+  $ aws s3 cp C:\Users\aangu\AppData\Local\Temp\miritmo-web-eltl3dvv\frontend\img\icono.svg s3://miritmo-frontend-5e016053/img/icono.svg --content-type image/svg+xml --cache-control no-cache --only-show-errors --profile miritmo
+  $ aws s3 cp C:\Users\aangu\AppData\Local\Temp\miritmo-web-eltl3dvv\frontend\js\acceso.js s3://miritmo-frontend-5e016053/js/acceso.js --content-type application/javascript; charset=utf-8 --cache-control no-cache --only-show-errors --profile miritmo
+  $ aws s3 cp C:\Users\aangu\AppData\Local\Temp\miritmo-web-eltl3dvv\frontend\js\comun.js s3://miritmo-frontend-5e016053/js/comun.js --content-type application/javascript; charset=utf-8 --cache-control no-cache --only-show-errors --profile miritmo
+  $ aws s3 cp C:\Users\aangu\AppData\Local\Temp\miritmo-web-eltl3dvv\frontend\js\config.js s3://miritmo-frontend-5e016053/js/config.js --content-type application/javascript; charset=utf-8 --cache-control no-cache --only-show-errors --profile miritmo
+  $ aws s3 cp C:\Users\aangu\AppData\Local\Temp\miritmo-web-eltl3dvv\frontend\js\dia.js s3://miritmo-frontend-5e016053/js/dia.js --content-type application/javascript; charset=utf-8 --cache-control no-cache --only-show-errors --profile miritmo
+  $ aws s3 cp C:\Users\aangu\AppData\Local\Temp\miritmo-web-eltl3dvv\frontend\js\semana.js s3://miritmo-frontend-5e016053/js/semana.js --content-type application/javascript; charset=utf-8 --cache-control no-cache --only-show-errors --profile miritmo
+  $ aws s3 cp C:\Users\aangu\AppData\Local\Temp\miritmo-web-eltl3dvv\frontend\vendor\chart.umd.min.js s3://miritmo-frontend-5e016053/vendor/chart.umd.min.js --content-type application/javascript; charset=utf-8 --cache-control no-cache --only-show-errors --profile miritmo
+11 archivos subidos.
+  $ aws cloudfront create-invalidation --distribution-id E1C3936GEOWFBQ --paths /* --output json --profile miritmo
+Invalidación I82FIGK66MBO1CXJF5WMKEN0S3: InProgress
+  $ aws cloudfront wait invalidation-completed --distribution-id E1C3936GEOWFBQ --id I82FIGK66MBO1CXJF5WMKEN0S3 --profile miritmo
+Invalidación I82FIGK66MBO1CXJF5WMKEN0S3: Completed
+===== Bloque 6 de la sección 6 =====
+PS> $Dominio = aws cloudfront get-distribution --id $Distribucion --profile $Perfil --query Distribution.DomainName --output text
+PS> curl.exe -s "https://$Dominio/js/config.js"
+// Generado por scripts/publicar_frontend.py: URL de la API (URL de función de Lambda).
+window.MIRITMO_CONFIG = {
+  apiUrl: "https://jaqdhe4yffqneg5kw2khwzz3pm0gztrw.lambda-url.us-east-2.on.aws",
+};
+PS> curl.exe -s -o NUL -w "semana.html: %{http_code} %{content_type}`n" "https://$Dominio/semana.html"
+semana.html: 200 text/html; charset=utf-8
+PS> curl.exe -s -w "`nGET /registros sin token: <oculto>" "$($Api.TrimEnd('/'))/registros?desde=2026-11-01&hasta=2026-11-07"
+{"error": "Tu sesión no es válida o expiró. Inicia sesión de nuevo."}
+GET /registros sin token: <oculto>
+```
+
+## [26] Paso 5 · Después de publicar desde el clon: la app sigue funcionando con examen@miritmo.mx (solo lectura)
+
+2026-11-24 14:31 · código de salida 0
+
+```powershell
+python evidencias/pruebas_navegador.py --url https://dnfx295km7eni.cloudfront.net --canal chrome --correo examen@miritmo.mx
+```
+
+```text
+Navegador: chrome 158.0.8127.38 · URL https://dnfx295km7eni.cloudfront.net · hoy (CDMX) 2026-11-24
+OK  Sin sesión, dia.html regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  Sin sesión, semana.html regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  Iniciar sesión y entrar a Mi día | https://dnfx295km7eni.cloudfront.net/dia.html
+OK  Fechas: hoy y los 6 días anteriores | 2026-11-24, 2026-11-23, 2026-11-22, 2026-11-21, 2026-11-20, 2026-11-19, 2026-11-18
+OK  RF-06: gráfica de 7 días con 'Sin registro' en los vacíos | 4 con barra, 3 'Sin registro', 24038 pixeles dibujados
+OK  RF-07: promedio y mejor día | app: promedio 73.3, mejor 90 (Sábado, 21 de noviembre); a mano: 38 + 90 + 81 + 84 = 293 / 4 = 73.25, máximo 90
+OK  Cerrar sesión regresa a Acceso | https://dnfx295km7eni.cloudfront.net/index.html
+OK  Contraseña incorrecta muestra error | Correo o contraseña incorrectos.
+OK  Iniciar sesión con datos correctos | https://dnfx295km7eni.cloudfront.net/dia.html
+Errores de consola: ninguno · todo OK: True
+```

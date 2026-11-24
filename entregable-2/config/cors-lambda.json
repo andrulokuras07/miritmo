@@ -1,0 +1,6 @@
+{
+  "AllowOrigins": ["https://__DOMINIO__"],
+  "AllowMethods": ["GET", "POST", "PUT"],
+  "AllowHeaders": ["content-type", "authorization"],
+  "MaxAge": 300
+}

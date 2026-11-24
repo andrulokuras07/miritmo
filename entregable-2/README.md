@@ -9,6 +9,8 @@ MVP completo: **registrar el día, ver la calificación, editar días y seguir l
 | Validaciones con mensajes de error claros en todas las pantallas | |
 | Tabla de pruebas de aceptación: [`docs/pruebas-aceptacion.md`](docs/pruebas-aceptacion.md) | |
 
+> **Desde Windows** (PowerShell, sin WSL), sigue el [README de la raíz](../README.md): requisitos, inicio de sesión en AWS e IBM, primer despliegue y publicación de nuevas versiones con `scripts/empaquetar_lambda.py` y `scripts/publicar_frontend.py`. Esta página describe el entregable y la ruta con scripts `.sh` (Linux/macOS) o la consola de AWS.
+
 **Criterio de entrega:** un usuario registra al menos tres días distintos, edita uno y ve la gráfica semanal y su promedio actualizados, desde celular y computadora.
 
 ## Estructura
@@ -23,20 +25,23 @@ entregable-2/
 │   │   ├── validacion.py     Validación de datos con mensajes en español
 │   │   └── almacen.py        Cloudant (nube) y memoria (local)
 │   ├── requirements.txt
-│   └── tests/test_api.py     34 pruebas
+│   └── tests/test_api.py     36 pruebas
 ├── frontend/                 Interfaz (S3 + CloudFront)
 │   ├── index.html            Acceso
 │   ├── dia.html              Mi día (registrar y editar)
 │   ├── semana.html           Mi semana (gráfica, promedio y mejor día)
 │   ├── vendor/               Chart.js 4.4.4
 │   └── css/  js/  img/
+├── config/                   Plantillas JSON del primer despliegue (README de la raíz)
 ├── docs/pruebas-aceptacion.md
 └── scripts/
     ├── desplegar_aws.sh      Despliega todo en AWS con un comando
     ├── crear_bases_cloudant.py
     ├── servidor_local.py     Corre todo en tu computadora
-    ├── empaquetar_lambda.sh  Genera build/miritmo-lambda.zip
-    └── publicar_frontend.sh  Sube la interfaz a S3 e invalida CloudFront
+    ├── empaquetar_lambda.py  Genera build/miritmo-lambda.zip (Windows, Linux o macOS)
+    ├── empaquetar_lambda.sh  Lo mismo para Linux/macOS (requiere zip)
+    ├── publicar_frontend.py  Sube la interfaz a S3 con su Content-Type e invalida CloudFront
+    └── publicar_frontend.sh  Lo mismo para Linux/macOS
 ```
 
 ## Probar en tu computadora
@@ -44,7 +49,7 @@ entregable-2/
 Solo necesitas Python 3.10 o superior. No se necesita AWS ni Cloudant (los datos quedan en memoria).
 
 ```bash
-python3 scripts/servidor_local.py
+python3 scripts/servidor_local.py      # en Windows: python scripts\servidor_local.py
 ```
 
 Abre http://localhost:8080.
@@ -59,14 +64,14 @@ cd backend && python3 -m unittest discover -s tests -v
 
 Si ya tienes desplegado el Entregable 1, solo hay que publicar la nueva versión (no cambia la infraestructura):
 
-1. Corre `scripts/desplegar_aws.sh` desde esta carpeta (usa el mismo `despliegue.env`). También puedes hacerlo a mano: `scripts/empaquetar_lambda.sh`, subir `build/miritmo-lambda.zip` a `miritmo-api` y `scripts/publicar_frontend.sh <bucket> <id-distribucion> <url-funcion-lambda>`.
+1. En Windows sigue la sección *Publicar una nueva versión* del [README de la raíz](../README.md#6-publicar-una-nueva-versión-lo-más-común). En Linux/macOS corre `scripts/desplegar_aws.sh` desde esta carpeta (usa el mismo `despliegue.env`), o a mano: `scripts/empaquetar_lambda.sh`, subir `build/miritmo-lambda.zip` a `miritmo-api` y `scripts/publicar_frontend.sh <bucket> <id-distribucion> <url-funcion-lambda>`.
 2. Verifica el flujo completo en la URL de CloudFront.
 
 ## Despliegue automático (recomendado)
 
 Un solo script crea y configura todo: bases en Cloudant, rol IAM, Lambda con su URL, bucket S3 privado, CloudFront con HTTPS y la interfaz. Se puede correr varias veces: crea lo que falte y actualiza lo demás.
 
-**Requisitos:** macOS o Linux (en Windows, usa WSL), Python 3.10+, `zip` y [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) 2.32 o más reciente.
+**Requisitos:** macOS o Linux (en Windows usa el [README de la raíz](../README.md), sin WSL), Python 3.10+, `zip` y [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) 2.32 o más reciente.
 
 1. Inicia sesión en AWS con tu cuenta de la consola:
    ```bash
@@ -96,7 +101,7 @@ Orden recomendado: Cloudant → Lambda → S3 + CloudFront → conectar las piez
 
 1. Genera el paquete:
    ```bash
-   scripts/empaquetar_lambda.sh
+   python3 scripts/empaquetar_lambda.py   # en Windows: python scripts\empaquetar_lambda.py
    ```
 2. En la consola de Lambda: **Create function** → *Author from scratch*
    - Nombre: `miritmo-api` · Runtime: **Python 3.12** · Arquitectura: **x86_64**
@@ -113,7 +118,7 @@ Orden recomendado: Cloudant → Lambda → S3 + CloudFront → conectar las piez
    | `ALLOWED_ORIGIN` | Dominio de CloudFront (paso 4), ej. `https://d1abc23xyz.cloudfront.net` |
 
    Las credenciales **solo** viven aquí; nunca en el código ni en GitHub (RNF-02).
-6. *Configuration → Function URL* → **Create function URL**: Auth type **NONE**. **Deja CORS desactivado**: el código ya responde CORS y solo acepta el dominio de `ALLOWED_ORIGIN`. Anota la URL (`https://xxxx.lambda-url.us-east-2.on.aws`).
+6. *Configuration → Function URL* → **Create function URL**: Auth type **NONE**. **Activa CORS**: *Allow origin* = dominio de CloudFront (`https://dxxxx.cloudfront.net`), *Allow methods* = `GET, POST, PUT`, *Allow headers* = `content-type, authorization`. En AWS el código **no** agrega encabezados CORS (solo con `CORS_EN_CODIGO=1`, que usa el servidor local); si los dos los agregaran, el encabezado saldría duplicado y el navegador rechazaría la respuesta. El código sigue respondiendo 403 a otros orígenes. Anota la URL (`https://xxxx.lambda-url.us-east-2.on.aws`).
 
 ### 3. Amazon S3 (bucket privado)
 
@@ -124,7 +129,7 @@ Orden recomendado: Cloudant → Lambda → S3 + CloudFront → conectar las piez
 1. **Create distribution** → Origin: el bucket de S3 → *Origin access*: **Origin access control settings** (crea un OAC).
 2. *Viewer protocol policy*: **Redirect HTTP to HTTPS**. *Default root object*: `index.html`. WAF: *Do not enable* (para mantener costo $0).
 3. Al crear, CloudFront muestra una **política de bucket**: cópiala y pégala en S3 → bucket → *Permissions → Bucket policy*.
-4. Anota el dominio (`https://dxxxx.cloudfront.net`) y ponlo en `ALLOWED_ORIGIN` de Lambda (paso 2.5).
+4. Anota el dominio (`https://dxxxx.cloudfront.net`) y ponlo en `ALLOWED_ORIGIN` de Lambda (paso 2.5) y en el CORS de la URL de función (paso 2.6).
 
 ### 5. Publicar la interfaz
 

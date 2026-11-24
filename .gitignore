@@ -1,8 +1,19 @@
+# Artefactos de construcción (zip de la Lambda, copias temporales)
 build/
 __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Secretos y configuración local: nunca se suben
 .env
-.DS_Store
+.env.*
+*.env
 despliegue.env
+!despliegue.env.ejemplo
+
+# Instrucciones locales del asistente
+CLAUDE.md
+.claude/
+
+.DS_Store

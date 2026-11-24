@@ -168,9 +168,14 @@ else
 fi
 rm -f build/entorno.json build/error-lambda.txt
 
-# URL de función pública (la seguridad la da el token; CORS lo maneja el código).
-if ! API_URL=$(aws lambda get-function-url-config --function-name "$FUNCION" --query FunctionUrl --output text 2>/dev/null); then
-  API_URL=$(aws lambda create-function-url-config --function-name "$FUNCION" --auth-type NONE --query FunctionUrl --output text)
+# URL de función pública (la seguridad la da el token). CORS lo pone la URL de función: el código
+# solo agrega encabezados CORS con CORS_EN_CODIGO=1 (servidor local); si los dos los pusieran,
+# Access-Control-Allow-Origin saldría duplicado y el navegador rechazaría la respuesta.
+CORS="{\"AllowOrigins\":[\"https://$DOMINIO\"],\"AllowMethods\":[\"GET\",\"POST\",\"PUT\"],\"AllowHeaders\":[\"content-type\",\"authorization\"],\"MaxAge\":300}"
+if API_URL=$(aws lambda get-function-url-config --function-name "$FUNCION" --query FunctionUrl --output text 2>/dev/null); then
+  aws lambda update-function-url-config --function-name "$FUNCION" --cors "$CORS" >/dev/null
+else
+  API_URL=$(aws lambda create-function-url-config --function-name "$FUNCION" --auth-type NONE --cors "$CORS" --query FunctionUrl --output text)
 fi
 POLITICA=$(aws lambda get-policy --function-name "$FUNCION" --query Policy --output text 2>/dev/null || echo "")
 if [[ "$POLITICA" != *'"Sid":"url-publica"'* ]]; then
